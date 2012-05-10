@@ -1,8 +1,8 @@
 package com.cfms.android.mousedroid.free.test;
 
-import com.cfms.android.mousedroid.MouseDroidActivity;
-
 import android.test.ActivityInstrumentationTestCase2;
+
+import com.cfms.android.mousedroid.activity.MouseDroidActivity;
 
 public class MouseDroidActivityTest extends
 		ActivityInstrumentationTestCase2<MouseDroidActivity> {
@@ -35,5 +35,8 @@ public class MouseDroidActivityTest extends
     	assertEquals(mActivity.getApplicationInfo().packageName, "com.cfms.android.mousedroid.free");
     }
 	
-	
+	//Config Tests done here for context
+    public void testConfigIsPaidVersion(){
+    	assertEquals(false, com.cfms.android.mousedroid.utils.Configuration.isPaidVersion(mActivity));
+    }
 }
