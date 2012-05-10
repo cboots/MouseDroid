@@ -3,6 +3,7 @@ package com.cfms.android.mousedroid.activity;
 import android.app.Activity;
 import android.os.Bundle;
 
+import com.cfms.android.mousedroid.R;
 import com.cfms.android.mousedroid.utils.Configuration;
 import com.cfms.android.mousedroid.utils.DebugLog;
 import com.flurry.android.FlurryAgent;
@@ -11,23 +12,24 @@ public abstract class BaseActivity extends Activity {
 	
 	public abstract String getTag();
 	
+	private int setTheme = 0;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		DebugLog.D(getTag(), "+++OnCreate+++");
-		//TODO implement themes
-//		String theme = Preferences.GetPreferences(this)
-//		.getString(Preferences.PREF_THEME, 
-//		           Preferences.DEF_THEME);
-//		if(theme.equals(Preferences.THEME_LIGHT))
-//		{
-//			//this.setTheme(android.R.style.Theme_Light);
-//		}else
-//		{
-//			//this.setTheme(android.R.style.Theme);
-//		}
-//		
-//		
+		setTheme = PreferencesActivity.getInteger(this, PreferencesActivity.PREF_THEME);
+		switch(setTheme)
+		{
+		case PreferencesActivity.THEME_DEFAULT:
+			this.setTheme(R.style.Theme_Dark);
+			break;
+		case PreferencesActivity.THEME_LIGHT:
+			this.setTheme(R.style.Theme_Light);
+			break;
+		case PreferencesActivity.THEME_COLORFUL:
+			this.setTheme(R.style.Theme_Colorful);
+			break;
+		}
 		
 		super.onCreate(savedInstanceState);
 	}
@@ -36,6 +38,12 @@ public abstract class BaseActivity extends Activity {
 	public void onResume() {
 		DebugLog.D(getTag(), "+  OnResume  +");
 		super.onResume();
+		if(setTheme != PreferencesActivity.getInteger(this, PreferencesActivity.PREF_THEME))
+		{
+			//Theme has changed, restart activity.
+			startActivity(getIntent());
+			finish();
+		}
 	}
 
 	@Override

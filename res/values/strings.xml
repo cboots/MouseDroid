@@ -6,5 +6,7 @@
     <string name="flurry_enabled_summary_off">Help Improve This App By Providing Anonymous Usage Data</string>
     <string name="flurry_enabled_summary_on">Anonymous Data Will Be Sent To Flurry Analytics To Help Improve This App</string>
     <string name="flurry_enabled_title">Send Usage Data</string>
+    <string name="theme_title">Change Skin</string>
+    <string name="theme_summary">Changes the look and feel of the app.</string>
 
 </resources>

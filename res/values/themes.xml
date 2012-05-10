@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme" parent="android:Theme.NoTitleBar">
+        <item name="button">@style/button</item>
+        <item name="editText">@style/edit_text</item>
+        <item name="textSmall">@style/text_small</item>
+        <item name="textRegular">@style/text_regular</item>
+        <item name="textBold">@style/text_bold</item>
+        <item name="textLink">@style/text_link</item>
+    </style>
+
+    <style name="Theme.Dark">
+        <!--
+			Override items from Theme and add new styles to styles.xml to create
+			a new theme.
+        -->
+    </style>
+
+    <style name="Theme.Light">
+        <!--
+			Override items from Theme and add new styles to styles.xml to create
+			a new theme.
+        -->
+    </style>
+
+    <style name="Theme.Colorful">
+
+        <!--
+			Override items from Theme and add new styles to styles.xml to create
+			a new theme.
+        -->
+        <item name="android:windowBackground">@color/translucent_blue</item>
+    </style>
+
+</resources>

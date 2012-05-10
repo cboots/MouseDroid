@@ -7,5 +7,7 @@
         android:summaryOn="@string/flurry_enabled_summary_on"
         android:title="@string/flurry_enabled_title" 
         android:defaultValue="@bool/flurry_enabled"/>
+    <ListPreference android:key="theme" android:entries="@array/theme_names" android:entryValues="@array/theme_values"
+        android:title="@string/theme_title" android:summary="@string/theme_summary"/>
 
 </PreferenceScreen>

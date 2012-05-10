@@ -12,6 +12,13 @@ public class PreferencesActivity extends PreferenceActivity {
 
 	public static final String PREF_FLURRY_ENABLED = "flurry_enabled";
 	public static final String PREF_FLURRY_LOCATION_ENABLED = "flurry_location_enabled";
+	public static final String PREF_THEME = "theme";
+	
+	public static final int THEME_DEFAULT = 0;
+	public static final int THEME_LIGHT = 1;
+	public static final int THEME_COLORFUL = 2;
+	
+	
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState){
