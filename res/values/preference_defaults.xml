@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Test resources used by testing framework-->
+    <bool name="test_default_bool_true">true</bool>
+    <bool name="test_default_bool_false">false</bool>
+    <integer name="test_default_int_1">1</integer>
+    <integer name="test_default_int_2">2</integer>
+    <string name="test_default_string_test1">test1</string>
+    <string name="test_default_string_test2">test2</string>
+    <integer name="test_change_int">0</integer>
+    
+    <!-- Actual values -->
+    <bool name="flurry_enabled">true</bool>
+    <bool name="flurry_location_enabled">false</bool>
+</resources>

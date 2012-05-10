@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <CheckBoxPreference
+        android:key="flurry_enabled"
+        android:summaryOff="@string/flurry_enabled_summary_off"
+        android:summaryOn="@string/flurry_enabled_summary_on"
+        android:title="@string/flurry_enabled_title" 
+        android:defaultValue="@bool/flurry_enabled"/>
+
+</PreferenceScreen>
