@@ -1,8 +1,8 @@
 package com.cfms.android.mousedroid.paid.test;
 
-import com.cfms.android.mousedroid.MouseDroidActivity;
-
 import android.test.ActivityInstrumentationTestCase2;
+
+import com.cfms.android.mousedroid.activity.MouseDroidActivity;
 
 public class MouseDroidActivityTest extends
 		ActivityInstrumentationTestCase2<MouseDroidActivity> {
@@ -34,5 +34,15 @@ public class MouseDroidActivityTest extends
     public void testAppPackage(){
     	assertEquals(mActivity.getApplicationInfo().packageName, "com.cfms.android.mousedroid.paid");
     }
-	
+
+    public void testGetTag(){
+    	assertEquals("MouseDroidActivity", mActivity.getTag());
+    	
+    }
+    
+    
+    //Config tests go here for context
+    public void testConfigIsPaidVersion(){
+    	assertEquals(true, com.cfms.android.mousedroid.utils.Configuration.isPaidVersion(mActivity));
+    }
 }
