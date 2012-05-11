@@ -11,7 +11,7 @@ public class MouseDroidActivityTest extends
 	
 	public MouseDroidActivityTest()
 	{
-		super("com.cfms.android.mousedroid.paid", MouseDroidActivity.class);
+		super(MouseDroidActivity.class);
 	}
 	
     @Override
@@ -23,7 +23,6 @@ public class MouseDroidActivityTest extends
     
     public void testPreconditions() {
     	assertNotNull(mActivity);
-    	
     }
     
     public void testAppName(){
@@ -41,8 +40,12 @@ public class MouseDroidActivityTest extends
     }
     
     
-    //Config tests go here for context
+    //Generic tests go here for context
     public void testConfigIsPaidVersion(){
     	assertEquals(true, com.cfms.android.mousedroid.utils.Configuration.isPaidVersion(mActivity));
+    }
+    
+    public void testApplicationInitializedProperly(){
+    	assertEquals(true, com.cfms.android.mousedroid.MouseDroidApplication.customApplicationInitialized);
     }
 }

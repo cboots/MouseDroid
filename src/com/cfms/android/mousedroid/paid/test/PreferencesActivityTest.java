@@ -13,7 +13,7 @@ public class PreferencesActivityTest extends
 	
 	public PreferencesActivityTest()
 	{
-		super("com.cfms.android.mousedroid.paid", PreferencesActivity.class);
+		super(PreferencesActivity.class);
 	}
 	
     @Override
