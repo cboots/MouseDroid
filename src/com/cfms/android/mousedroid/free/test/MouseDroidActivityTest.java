@@ -11,7 +11,7 @@ public class MouseDroidActivityTest extends
 	
 	public MouseDroidActivityTest()
 	{
-		super("com.cfms.android.mousedroid.free", MouseDroidActivity.class);
+		super(MouseDroidActivity.class);
 	}
 	
     @Override
