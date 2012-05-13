@@ -3,7 +3,6 @@ package com.cfms.android.mousedroid.bluetooth;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Binder;
-import android.os.HandlerThread;
 import android.os.IBinder;
 
 import com.cfms.android.mousedroid.utils.DebugLog;
