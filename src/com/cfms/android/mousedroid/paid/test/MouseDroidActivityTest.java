@@ -39,13 +39,4 @@ public class MouseDroidActivityTest extends
     	
     }
     
-    
-    //Generic tests go here for context
-    public void testConfigIsPaidVersion(){
-    	assertEquals(true, com.cfms.android.mousedroid.utils.Configuration.isPaidVersion(mActivity));
-    }
-    
-    public void testApplicationInitializedProperly(){
-    	assertEquals(true, com.cfms.android.mousedroid.MouseDroidApplication.customApplicationInitialized);
-    }
 }
