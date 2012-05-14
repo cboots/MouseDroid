@@ -21,6 +21,15 @@ public class ConfigTest extends
         
     }
 
+    public void testAppName(){
+    	String app_name = mActivity.getString(com.cfms.android.mousedroid.paid.R.string.app_name);
+    	assertEquals("Mouse Droid Pro", app_name);
+    }
+    
+    public void testAppPackage(){
+    	assertEquals(mActivity.getApplicationInfo().packageName, "com.cfms.android.mousedroid.paid");
+    }
+    
     public void testConfigIsPaidVersion(){
     	assertEquals(true, com.cfms.android.mousedroid.utils.Configuration.isPaidVersion(mActivity));
     }
