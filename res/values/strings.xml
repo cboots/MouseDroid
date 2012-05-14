@@ -8,5 +8,6 @@
     <string name="flurry_enabled_title">Send Usage Data</string>
     <string name="theme_title">Change Skin</string>
     <string name="theme_summary">Changes the look and feel of the app.</string>
+    <string name="bt_not_enabled_quit">Bluetooth Not Enabled, Cannot Continue</string>
 
 </resources>
