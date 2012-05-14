@@ -2,16 +2,16 @@ package com.cfms.android.mousedroid.paid.test;
 
 import android.test.ActivityInstrumentationTestCase2;
 
-import com.cfms.android.mousedroid.activity.MouseDroidActivity;
+import com.cfms.android.mousedroid.activity.PreferencesActivity;
 
 public class ConfigTest extends
-		ActivityInstrumentationTestCase2<MouseDroidActivity> {
+		ActivityInstrumentationTestCase2<PreferencesActivity> {
 
-	MouseDroidActivity mActivity;
+	PreferencesActivity mActivity;
 	
 	public ConfigTest()
 	{
-		super(MouseDroidActivity.class);
+		super(PreferencesActivity.class);
 	}
 	
     @Override

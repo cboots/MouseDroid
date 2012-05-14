@@ -16,6 +16,7 @@ public class BluetoothActivityTest extends
 	
     @Override
     protected void setUp() throws Exception {
+    	assertEquals(true, BluetoothTestUtils.isBluetoothEnabled());
         super.setUp();
         mActivity = this.getActivity();
         
@@ -34,6 +35,14 @@ public class BluetoothActivityTest extends
     public void testBluetoothServiceStarted(){
     	getInstrumentation().waitForIdleSync();
     	assertEquals(true, mActivity.isBTServiceStarted());
+    }
+    
+    public void testGetBluetoothService(){
+    	assertNotNull(mActivity.getBTService());
+    }
+    
+    public void testIsBoundToBTService(){
+    	assertEquals(true, mActivity.isBoundToBTService());
     }
     
 }
