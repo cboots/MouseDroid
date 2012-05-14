@@ -1,6 +1,4 @@
-package com.cfms.android.mousedroid.paid.test;
-
-import org.junit.Assert;
+package com.cfms.android.mousedroid.test;
 
 import android.test.ActivityInstrumentationTestCase2;
 

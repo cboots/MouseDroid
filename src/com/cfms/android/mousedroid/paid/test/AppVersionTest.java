@@ -4,12 +4,12 @@ import android.test.ActivityInstrumentationTestCase2;
 
 import com.cfms.android.mousedroid.activity.PreferencesActivity;
 
-public class ConfigTest extends
+public class AppVersionTest extends
 		ActivityInstrumentationTestCase2<PreferencesActivity> {
 
 	PreferencesActivity mActivity;
 	
-	public ConfigTest()
+	public AppVersionTest()
 	{
 		super(PreferencesActivity.class);
 	}
@@ -34,7 +34,4 @@ public class ConfigTest extends
     	assertEquals(true, com.cfms.android.mousedroid.utils.Configuration.isPaidVersion(mActivity));
     }
     
-    public void testApplicationInitializedProperly(){
-    	assertEquals(true, com.cfms.android.mousedroid.MouseDroidApplication.customApplicationInitialized);
-    }
 }

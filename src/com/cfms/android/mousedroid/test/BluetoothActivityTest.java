@@ -1,4 +1,4 @@
-package com.cfms.android.mousedroid.paid.test;
+package com.cfms.android.mousedroid.test;
 
 import android.test.ActivityInstrumentationTestCase2;
 
