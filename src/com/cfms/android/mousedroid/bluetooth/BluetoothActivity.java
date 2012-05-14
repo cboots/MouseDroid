@@ -28,7 +28,25 @@ public class BluetoothActivity extends BaseActivity {
 	
 
     protected static final int REQUEST_ENABLE_BT = 101;
-    
+
+    /** Defines callbacks for service binding, passed to bindService() */
+    private ServiceConnection mConnection = new ServiceConnection() {
+
+        @Override
+        public void onServiceConnected(ComponentName className,
+                IBinder service) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+        	BluetoothBinder binder = (BluetoothBinder) service;
+        	mBtService = binder.getService();
+            mBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName arg0) {
+            mBound = false;
+            mBtService = null;
+        }
+    };
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState){
@@ -108,25 +126,6 @@ public class BluetoothActivity extends BaseActivity {
 	    }
 	
 	
-    /** Defines callbacks for service binding, passed to bindService() */
-    private ServiceConnection mConnection = new ServiceConnection() {
-
-        @Override
-        public void onServiceConnected(ComponentName className,
-                IBinder service) {
-            // We've bound to LocalService, cast the IBinder and get LocalService instance
-        	BluetoothBinder binder = (BluetoothBinder) service;
-        	mBtService = binder.getService();
-            mBound = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName arg0) {
-            mBound = false;
-            mBtService = null;
-        }
-    };
-	
     public boolean isBoundToBTService()
     {
     	return mBound;
@@ -150,7 +149,6 @@ public class BluetoothActivity extends BaseActivity {
             startActivity(discoverableIntent);
         }
     }
-
 
     protected void setupBT(){
     	DebugLog.D(getTag(), "setupBT");
@@ -188,7 +186,7 @@ public class BluetoothActivity extends BaseActivity {
 	}
     
     public void onBTMessage(byte[] message, int length){
-    	
+    	//TODO
     }
 
 	@Override
