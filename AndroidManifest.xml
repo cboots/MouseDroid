@@ -9,10 +9,14 @@
         android:targetSdkVersion="15" />
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <uses-permission android:name="android.permission.VIBRATE"/>
 
     <application
+        android:name="com.cfms.android.mousedroid.MouseDroidApplication"
         android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name" android:theme="@style/Theme"  android:name="com.cfms.android.mousedroid.MouseDroidApplication">
+        android:label="@string/app_name"
+        android:theme="@style/Theme" >
         <activity
             android:name="com.cfms.android.mousedroid.activity.MouseDroidActivity"
             android:label="@string/app_name" >
@@ -24,6 +28,11 @@
         </activity>
         <activity android:name="com.cfms.android.mousedroid.activity.PreferencesActivity" >
         </activity>
+        <activity android:name="com.cfms.android.mousedroid.bluetooth.BluetoothActivity" >
+        </activity>
+
+        <service android:name="com.cfms.android.mousedroid.bluetooth.BluetoothService" >
+        </service>
     </application>
 
 </manifest>
