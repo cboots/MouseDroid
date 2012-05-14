@@ -9,7 +9,7 @@ public class ByteBufferFactory {
 
 	private static final String TAG = "ByteBufferFactory";
 
-	public static final int BUFFER_SIZE = 1024;
+	public static final int BUFFER_SIZE = 256;
 	
 	private static ArrayList<LockedBuffer> sBufferList = new ArrayList<LockedBuffer>(3);
 	
