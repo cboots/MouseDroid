@@ -9,6 +9,7 @@
     <instrumentation
         android:name="android.test.InstrumentationTestRunner"
         android:targetPackage="com.cfms.android.mousedroid.free" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
 
     <application
         android:icon="@drawable/ic_launcher"
