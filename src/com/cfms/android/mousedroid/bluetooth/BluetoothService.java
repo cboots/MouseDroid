@@ -90,9 +90,9 @@ public class BluetoothService extends Service {
 
 	// Unique UUID for this application
 	private static final UUID MY_UUID_SECURE = UUID
-			.fromString("fa87c0d0-afac-11de-8a39-0800200c9a66");
+			.fromString("6201c3fc-22cc-4a55-8fc2-4f4342ad97e0");
 	private static final UUID MY_UUID_INSECURE = UUID
-			.fromString("8ce255c0-200a-11e0-ac64-0800200c9a66");
+			.fromString("fa46ddbb-0694-49f6-993c-1a1621f2e34d");
 
 	/**
 	 * Class used for the client Binder. Because we know this service always
