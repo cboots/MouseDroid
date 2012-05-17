@@ -251,6 +251,10 @@ public class BluetoothService extends Service {
 		}
 	}
 
+	public synchronized void connect(BluetoothDevice device){
+		connect(device, false);
+	}
+	
 	/**
 	 * Start the ConnectThread to initiate a connection to a remote device.
 	 * 

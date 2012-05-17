@@ -125,8 +125,6 @@ public class BluetoothActivity extends BaseActivity {
 	@Override
 	public void onStop() {
 		DebugLog.D(TAG, "-- onStop --");
-		// Unbind from the service
-		closeBT();
 
 		super.onStop();
 	}
@@ -137,6 +135,8 @@ public class BluetoothActivity extends BaseActivity {
 	@Override
 	public void onDestroy() {
 		DebugLog.D(TAG, "---onDestroy---");
+		// Unbind from the service
+		closeBT();
 		super.onDestroy();
 	}
 

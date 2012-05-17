@@ -10,6 +10,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <uses-feature
@@ -36,6 +37,8 @@
         <activity android:name=".activity.PreferencesActivity" >
         </activity>
         <activity android:name=".activity.MotionMouseActivity" >
+        </activity>
+        <activity android:name=".activity.DeviceListActivity" >
         </activity>
         <activity android:name="com.cfms.android.mousedroid.bluetooth.BluetoothActivity" >
         </activity>
