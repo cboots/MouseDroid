@@ -8,9 +8,13 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.view.Display;
+import android.view.LayoutInflater;
 import android.view.Surface;
+import android.view.View;
 import android.view.WindowManager;
+import android.widget.LinearLayout;
 
+import com.cfms.android.mousedroid.R;
 import com.cfms.android.mousedroid.bluetooth.BluetoothActivity;
 
 public class MotionMouseActivity extends BluetoothActivity implements
@@ -112,7 +116,7 @@ public class MotionMouseActivity extends BluetoothActivity implements
 		mCpuTimeStamp = System.nanoTime();
 
 	}
-
+	
 	private String TAG = "MotionMouseActivity";
 	@Override
 	public String getTag(){

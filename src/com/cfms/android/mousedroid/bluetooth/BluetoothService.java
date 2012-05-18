@@ -89,8 +89,11 @@ public class BluetoothService extends Service {
 	public static final int ERRORCODE_CONNECTION_LOST = 2;
 
 	// Unique UUID for this application
+	/** The Constant MY_UUID_SECURE. */
 	private static final UUID MY_UUID_SECURE = UUID
 			.fromString("6201c3fc-22cc-4a55-8fc2-4f4342ad97e0");
+	
+	/** The Constant MY_UUID_INSECURE. */
 	private static final UUID MY_UUID_INSECURE = UUID
 			.fromString("fa46ddbb-0694-49f6-993c-1a1621f2e34d");
 
@@ -222,6 +225,15 @@ public class BluetoothService extends Service {
 	}
 
 	/**
+	 * Checks if is connected.
+	 *
+	 * @return true, if is connected
+	 */
+	public boolean isConnected(){
+		return (mState == STATE_CONNECTED);
+	}
+	
+	/**
 	 * Error.
 	 * 
 	 * @param errorCode
@@ -240,17 +252,29 @@ public class BluetoothService extends Service {
 	 *            An integer defining the current connection state
 	 */
 	private synchronized void setState(int state) {
-
+		int oldState = mState;
+		
 		DebugLog.D(TAG, "setState() " + mState + " -> " + state);
 		mState = state;
 
 		// Give the new state to the Handler so the UI Activity can update
 		if (mHandler != null) {
-			mHandler.obtainMessage(MESSAGE_STATE_CHANGE, state, -1)
+			mHandler.obtainMessage(MESSAGE_STATE_CHANGE, oldState, state)
 					.sendToTarget();
 		}
 	}
 
+    /**
+     * Return the current connection state. */
+    public synchronized int getState() {
+        return mState;
+    }
+	
+	/**
+	 * Connect.
+	 *
+	 * @param device the device
+	 */
 	public synchronized void connect(BluetoothDevice device){
 		connect(device, false);
 	}
@@ -515,15 +539,15 @@ public class BluetoothService extends Service {
 					bytes = mmInStream.read(buffer);
 
 					// Send the obtained bytes to the UI Activity
-					if (mHandler != null) {
+					if (bytes > 0 && mHandler != null) {
 						mHandler.obtainMessage(BluetoothService.MESSAGE_READ,
 								bytes, -1, buffer).sendToTarget();
+					}else{
+							ByteBufferFactory.releaseBuffer(buffer);
 					}
 				} catch (IOException e) {
 					DebugLog.E(TAG, "disconnected", e);
-					connectionLost();
-					// Start the service over to restart listening mode
-					BluetoothService.this.reset();
+					connectionLost();//Restarts service
 					break;
 				}
 			}

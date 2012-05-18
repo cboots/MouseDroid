@@ -250,8 +250,7 @@ public class BluetoothActivity extends BaseActivity {
         public void handleMessage(Message msg) {
             switch (msg.what) {
             case BluetoothService.MESSAGE_STATE_CHANGE:
-               DebugLog.I(TAG, "MESSAGE_STATE_CHANGE: " + msg.arg1);
-                onBTStateChanged(msg.arg1);
+                onBTStateChanged(msg.arg1, msg.arg2);
                 break;
             case BluetoothService.MESSAGE_WRITE:
                 byte[] writeBuf = (byte[]) msg.obj;
@@ -304,8 +303,9 @@ public class BluetoothActivity extends BaseActivity {
 	/**
 	 * Called when the BluetoothService state changes
 	 * Override this method to handle this event
+	 * @param arg2 
 	 */
-	public void onBTStateChanged(int newState){
+	public void onBTStateChanged(int oldState, int newState){
 		//Do nothing, event handler
 	}
 

@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.cfms.android.mousedroid.R;
 import com.cfms.android.mousedroid.bluetooth.BluetoothActivity;
@@ -65,7 +66,17 @@ public class MouseDroidActivity extends BluetoothActivity {
 		}
         return false;
     }
-	
+
+
+	byte[] testCmd = {1};
+	public void testButton(final View target) {
+        if(this.isBoundToBTService()){
+        	if(getBTService().isConnected()){
+        		getBTService().write(testCmd, 1);
+        	}
+        }
+    }
+
     
     private final String TAG = "MouseDroidActivity";
 	@Override
