@@ -59,6 +59,11 @@ public class MouseDroidActivity extends BluetoothActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
 		int id = item.getItemId();
         if (id == R.id.scan) {
+        	if(this.isBoundToBTService()){
+            	if(getBTService().isConnected()){
+            		getBTService().disconnect();
+            	}
+            }
 			// Launch the DeviceListActivity to see devices and do scan
         	Intent serverIntent = new Intent(this, DeviceListActivity.class);
 			startActivityForResult(serverIntent, REQUEST_CONNECT_DEVICE);

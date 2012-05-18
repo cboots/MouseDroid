@@ -260,7 +260,7 @@ public class BluetoothActivity extends BaseActivity {
             case BluetoothService.MESSAGE_READ:
                 byte[] readBuf = (byte[]) msg.obj;
                 length = msg.arg1;
-                onBTMessageWritten(readBuf, length);
+                onBTMessageRead(readBuf, length);
                 break;
             case BluetoothService.MESSAGE_ERROR:
             	int errorCode = msg.arg1;
@@ -289,15 +289,12 @@ public class BluetoothActivity extends BaseActivity {
 	/**
 	 * Called when a message is written out to the bluetooth socket.
 	 * Override this method to handle this event
-	 * By default the implementation simply releases the buffer back to the factory to prevent memory overloads.
-	 * Any override must release the buffer itself or call super.onBTMessageWritten(message, length)
 	 *
 	 * @param message the message
 	 * @param length the length of the message
 	 */
 	public void onBTMessageWritten(byte[] message, int length) {
-		//Release the buffer
-		ByteBufferFactory.releaseBuffer(message);
+		
 	}
 	
 	/**
