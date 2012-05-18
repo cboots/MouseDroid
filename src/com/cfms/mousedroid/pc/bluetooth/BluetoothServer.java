@@ -245,7 +245,9 @@ public class BluetoothServer {
 			LocalDevice local = null;
 			try {
 				local = LocalDevice.getLocalDevice();
-				local.setDiscoverable(DiscoveryAgent.GIAC);
+				if(local.getDiscoverable() != DiscoveryAgent.GIAC)
+					local.setDiscoverable(DiscoveryAgent.GIAC);
+				
 				String url;
 				if (mmSecure) {
 					url = "btspp://localhost:" + uuidStrSecure

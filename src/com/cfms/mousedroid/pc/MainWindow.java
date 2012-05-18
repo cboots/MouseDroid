@@ -2,10 +2,8 @@ package com.cfms.mousedroid.pc;
 
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
-import java.awt.Robot;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -14,6 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.border.EmptyBorder;
 
+import com.cfms.mousedroid.pc.bluetooth.BluetoothProtocol;
 import com.cfms.mousedroid.pc.bluetooth.BluetoothServer;
 import com.cfms.mousedroid.pc.bluetooth.BluetoothServer.BTEventListener;
 
@@ -110,12 +109,48 @@ public class MainWindow extends JFrame implements BTEventListener {
 		
 	}
 
+	byte[] commandBuffer = new byte[128];
+	int commandLength = 0;
+	
 	@Override
 	public void onBTMessageRead(byte[] message, int length) {
-		// TODO Auto-generated method stub
-		
+		for(int i = 0; i< length; i++)
+		{
+			commandBuffer[commandLength] = message[i];
+			if(commandLength == 0)
+			{
+				if(message[i] == BluetoothProtocol.PACKET_PREAMBLE){
+					commandLength++;
+				}
+			}else{
+				commandLength++;
+			}
+			
+			if(isFullCommand(commandBuffer, commandLength)){
+				executeCommand(commandBuffer, commandLength);
+			}
+		}
 	}
-	
+
+	public boolean isFullCommand(byte[] commandBuffer, int len) {
+		if(len >= 4){
+			if(commandBuffer[len - 1] == BluetoothProtocol.LF
+					&& commandBuffer[len - 2] == BluetoothProtocol.CR){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void executeCommand(byte[] commandBuffer, int len) {
+		byte ID = commandBuffer[1];
+		switch(ID)
+		{
+		case BluetoothProtocol.ID_DISCONNECT:
+			mBTServer.disconnect();
+			break;
+		}
+	}
 
 	
 }
