@@ -1,14 +1,13 @@
 package com.cfms.android.mousedroid.test;
 
 import android.app.Activity;
-import android.app.Instrumentation;
 import android.app.Instrumentation.ActivityMonitor;
 import android.test.ActivityInstrumentationTestCase2;
 import android.view.KeyEvent;
 
 import com.cfms.android.mousedroid.R;
-import com.cfms.android.mousedroid.activity.MouseDroidActivity;
 import com.cfms.android.mousedroid.activity.DeviceListActivity;
+import com.cfms.android.mousedroid.activity.MouseDroidActivity;
 
 public class MouseDroidActivityTest extends
 		ActivityInstrumentationTestCase2<MouseDroidActivity> {
