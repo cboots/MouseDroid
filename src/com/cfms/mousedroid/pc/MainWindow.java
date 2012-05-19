@@ -19,10 +19,10 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.border.EmptyBorder;
 
-import com.cfms.mousedroid.pc.bluetooth.BTProtocol;
-import com.cfms.mousedroid.pc.bluetooth.BTProtocol.MouseButton;
-import com.cfms.mousedroid.pc.bluetooth.BTProtocol.MouseButtonEvent;
-import com.cfms.mousedroid.pc.bluetooth.BTProtocol.PacketID;
+import com.cfms.android.mousedroid.BTProtocol;
+import com.cfms.android.mousedroid.BTProtocol.MouseButton;
+import com.cfms.android.mousedroid.BTProtocol.MouseButtonEvent;
+import com.cfms.android.mousedroid.BTProtocol.PacketID;
 import com.cfms.mousedroid.pc.bluetooth.BluetoothServer;
 import com.cfms.mousedroid.pc.bluetooth.BluetoothServer.BTEventListener;
 
