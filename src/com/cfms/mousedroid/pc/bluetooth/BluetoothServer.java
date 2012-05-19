@@ -44,7 +44,7 @@ public class BluetoothServer {
 	ListeningThread mListeningThread;
 
 	/** The m connected thread. */
-	ProcessConnectionThread mConnectedThread;
+	ConnectedThread mConnectedThread;
 
 	/** The m state. */
 	int mState = STATE_NONE;
@@ -159,6 +159,29 @@ public class BluetoothServer {
 		}
 	}
 
+
+	/**
+	 * Write.
+	 * 
+	 * @param message
+	 *            the message
+	 * @param length
+	 *            the length
+	 */
+	public void write(byte[] message, int length) {
+		// Create temporary object
+		ConnectedThread r;
+		// Synchronize a copy of the ConnectedThread
+		synchronized (this) {
+			if (mState != STATE_CONNECTED)
+				return;
+			r = mConnectedThread;
+		}
+		// Perform the write unsynchronized
+		r.write(message, length);
+	}
+	
+	
 	/**
 	 * Connected.
 	 * 
@@ -178,7 +201,7 @@ public class BluetoothServer {
 			mConnectedThread = null;
 		}
 
-		mConnectedThread = new ProcessConnectionThread(connection);
+		mConnectedThread = new ConnectedThread(connection);
 		mConnectedThread.start();
 
 		setState(STATE_CONNECTED);
@@ -314,7 +337,7 @@ public class BluetoothServer {
 	/**
 	 * The Class ProcessConnectionThread.
 	 */
-	public class ProcessConnectionThread extends Thread {
+	public class ConnectedThread extends Thread {
 
 		/** The m connection. */
 		private StreamConnection mmConnection;
@@ -331,7 +354,7 @@ public class BluetoothServer {
 		 * @param connection
 		 *            the connection
 		 */
-		public ProcessConnectionThread(StreamConnection connection) {
+		public ConnectedThread(StreamConnection connection) {
 			mmConnection = connection;
 			// prepare to receive data
 			try {
