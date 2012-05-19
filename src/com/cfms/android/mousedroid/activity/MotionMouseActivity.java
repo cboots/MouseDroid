@@ -12,10 +12,10 @@ import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
 
+import com.cfms.android.mousedroid.BTProtocol;
+import com.cfms.android.mousedroid.BTProtocol.MouseButton;
+import com.cfms.android.mousedroid.BTProtocol.MouseButtonEvent;
 import com.cfms.android.mousedroid.R;
-import com.cfms.android.mousedroid.bluetooth.BTProtocol;
-import com.cfms.android.mousedroid.bluetooth.BTProtocol.MouseButton;
-import com.cfms.android.mousedroid.bluetooth.BTProtocol.MouseButtonEvent;
 import com.cfms.android.mousedroid.bluetooth.BluetoothActivity;
 
 public class MotionMouseActivity extends BluetoothActivity implements
@@ -123,15 +123,18 @@ public class MotionMouseActivity extends BluetoothActivity implements
 	public void testButton(View target){
 		if(isBoundToBTService())
 		{
-			BTProtocol.onMoveMouse(getBTService(), 10, -10);
+			byte[] packet = BTProtocol.getMouseMovePacket((short)10, (short)-10);
+			getBTService().write(packet, packet.length);
 		}
 	}
 
 	public void testButton1(View target){
 		if(isBoundToBTService())
 		{
-			BTProtocol.onMouseButtonEvent(getBTService(), MouseButton.BUTTON1, MouseButtonEvent.PRESS);
-			BTProtocol.onMouseButtonEvent(getBTService(), MouseButton.BUTTON1, MouseButtonEvent.RELEASE);
+			byte[] packet = BTProtocol.getMouseButtonEventPacket(MouseButton.BUTTON1, MouseButtonEvent.PRESS);
+			getBTService().write(packet, packet.length);
+			packet = BTProtocol.getMouseButtonEventPacket(MouseButton.BUTTON1, MouseButtonEvent.RELEASE);
+			getBTService().write(packet, packet.length);
 		}
 	}
 	

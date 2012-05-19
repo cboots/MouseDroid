@@ -23,9 +23,10 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.cfms.android.mousedroid.BTProtocol;
+import com.cfms.android.mousedroid.BTProtocol.PacketID;
 import com.cfms.android.mousedroid.R;
 import com.cfms.android.mousedroid.activity.MouseDroidActivity;
-import com.cfms.android.mousedroid.bluetooth.BTProtocol.PacketID;
 import com.cfms.android.mousedroid.utils.DebugLog;
 
 // TODO: Auto-generated Javadoc
