@@ -73,13 +73,9 @@ public class MouseDroidActivity extends BluetoothActivity {
     }
 
 
-	byte[] testCmd = {1};
 	public void testButton(final View target) {
-        if(this.isBoundToBTService()){
-        	if(getBTService().isConnected()){
-        		getBTService().write(testCmd, 1);
-        	}
-        }
+        Intent i = new Intent(this, MotionMouseActivity.class);
+        startActivity(i);
     }
 
     

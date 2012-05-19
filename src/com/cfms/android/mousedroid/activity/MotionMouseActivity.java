@@ -8,13 +8,14 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.view.Display;
-import android.view.LayoutInflater;
 import android.view.Surface;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.LinearLayout;
 
 import com.cfms.android.mousedroid.R;
+import com.cfms.android.mousedroid.bluetooth.BTProtocol;
+import com.cfms.android.mousedroid.bluetooth.BTProtocol.MouseButton;
+import com.cfms.android.mousedroid.bluetooth.BTProtocol.MouseButtonEvent;
 import com.cfms.android.mousedroid.bluetooth.BluetoothActivity;
 
 public class MotionMouseActivity extends BluetoothActivity implements
@@ -60,6 +61,7 @@ public class MotionMouseActivity extends BluetoothActivity implements
         mWakeLock = mPowerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, getClass()
                 .getName());
 
+        setContentView(R.layout.motion_mouse);
 	}
 	
 	@Override
@@ -115,6 +117,22 @@ public class MotionMouseActivity extends BluetoothActivity implements
 		mSensorTimeStamp = event.timestamp;
 		mCpuTimeStamp = System.nanoTime();
 
+	}
+	
+	
+	public void testButton(View target){
+		if(isBoundToBTService())
+		{
+			BTProtocol.onMoveMouse(getBTService(), 10, -10);
+		}
+	}
+
+	public void testButton1(View target){
+		if(isBoundToBTService())
+		{
+			BTProtocol.onMouseButtonEvent(getBTService(), MouseButton.BUTTON1, MouseButtonEvent.PRESS);
+			BTProtocol.onMouseButtonEvent(getBTService(), MouseButton.BUTTON1, MouseButtonEvent.RELEASE);
+		}
 	}
 	
 	private String TAG = "MotionMouseActivity";

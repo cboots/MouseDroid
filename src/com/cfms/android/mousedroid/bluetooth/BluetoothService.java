@@ -25,6 +25,7 @@ import android.util.Log;
 
 import com.cfms.android.mousedroid.R;
 import com.cfms.android.mousedroid.activity.MouseDroidActivity;
+import com.cfms.android.mousedroid.bluetooth.BTProtocol.PacketID;
 import com.cfms.android.mousedroid.utils.DebugLog;
 
 // TODO: Auto-generated Javadoc
@@ -203,12 +204,6 @@ public class BluetoothService extends Service {
 		super.onDestroy();
 	}
 
-	/**
-	 * Allows writes to the bluetooth stream in an unsynchronized manner.
-	 * 
-	 * @param handler
-	 *            the new handler
-	 */
 
 	/**
 	 * Sets the message handler.
@@ -647,9 +642,9 @@ public class BluetoothService extends Service {
 		public void disconnect() {
 			mmDisconnected = true;
 			// Disconnect packet
-			byte[] buffer = { BluetoothProtocol.PACKET_PREAMBLE,
-					BluetoothProtocol.ID_DISCONNECT, BluetoothProtocol.CR,
-					BluetoothProtocol.LF };
+			byte[] buffer = { BTProtocol.PACKET_PREAMBLE,
+					PacketID.DISCONNECT.getCode(), BTProtocol.CR,
+					BTProtocol.LF };
 			try {
 				mmOutStream.write(buffer, 0, 4);
 				// Share the sent message back to the UI Activity
