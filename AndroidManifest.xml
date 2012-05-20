@@ -36,7 +36,7 @@
         </activity>
         <activity android:name="com.cfms.android.mousedroid.activity.PreferencesActivity" >
         </activity>
-        <activity android:name="com.cfms.android.mousedroid.activity.MotionMouseActivity" >
+        <activity android:name="com.cfms.android.mousedroid.activity.MouseActivity" >
         </activity>
         <activity android:name="com.cfms.android.mousedroid.activity.DeviceListActivity" >
         </activity>
