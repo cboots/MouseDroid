@@ -18,8 +18,8 @@ public class BTProtocol {
 	 * The Enum PacketID.
 	 */
 	public static enum PacketID {
-		DISCONNECT(1), GET_VERSION(2), RET_VERSION(3), MOVE_MOUSE(4), 
-			MOUSE_BUTTON_EVENT(5), MOUSE_WHEEL_EVENT(6), KEY_EVENT(7);
+		DISCONNECT(1), GET_VERSION(2), RET_VERSION(3), MOVE_MOUSE(4), MOUSE_BUTTON_EVENT(
+				5), MOUSE_WHEEL_EVENT(6), KEY_EVENT(7);
 
 		private static final Map<Byte, PacketID> lookup = new HashMap<Byte, PacketID>();
 
@@ -128,28 +128,27 @@ public class BTProtocol {
 			return lookup.get(code);
 		}
 	}
-	
+
 	/** The Constant CR. */
 	public final static byte CR = (byte) 0x0D;
 
 	/** The Constant LF. */
 	public final static byte LF = (byte) 0x0A;
 
-
 	/**
 	 * Gets the disconnect packet.
-	 *
+	 * 
 	 * @return the disconnect packet
 	 */
-	public static byte[] getDisconnectPacket(){
+	public static byte[] getDisconnectPacket() {
 		byte[] packet = new byte[] { PACKET_PREAMBLE,
 				PacketID.DISCONNECT.getCode(), CR, LF };
 		return packet;
 	}
-	
+
 	/**
 	 * Gets the gets the version packet.
-	 *
+	 * 
 	 * @return the gets the version packet
 	 */
 	public static byte[] getGetVersionPacket() {
@@ -157,29 +156,36 @@ public class BTProtocol {
 				PacketID.GET_VERSION.getCode(), CR, LF };
 		return packet;
 	}
-	
+
 	/**
 	 * Gets the ret version packet.
-	 *
-	 * @param majorVersion the major version
-	 * @param minorVersion the minor version
+	 * 
+	 * @param majorVersion
+	 *            the major version
+	 * @param minorVersion
+	 *            the minor version
 	 * @return the ret version packet
 	 */
-	public static byte[] getRetVersionPacket(byte majorVersion,  byte minorVersion){
-		byte[] packet = new byte[] { PACKET_PREAMBLE, PacketID.RET_VERSION.getCode(), majorVersion, minorVersion, CR, LF };
+	public static byte[] getRetVersionPacket(byte majorVersion,
+			byte minorVersion) {
+		byte[] packet = new byte[] { PACKET_PREAMBLE,
+				PacketID.RET_VERSION.getCode(), majorVersion, minorVersion, CR,
+				LF };
 		return packet;
 	}
-	
+
 	/**
 	 * Gets the mouse button event packet.
-	 *
-	 * @param MB the mB
-	 * @param MBE the mBE
+	 * 
+	 * @param MB
+	 *            the mB
+	 * @param MBE
+	 *            the mBE
 	 * @return the mouse button event packet
 	 */
-	public static byte[] getMouseButtonEventPacket(
-			MouseButton MB, MouseButtonEvent MBE) {
-		byte[] packet = new byte[]{ PACKET_PREAMBLE,
+	public static byte[] getMouseButtonEventPacket(MouseButton MB,
+			MouseButtonEvent MBE) {
+		byte[] packet = new byte[] { PACKET_PREAMBLE,
 				PacketID.MOUSE_BUTTON_EVENT.getCode(), MB.getCode(),
 				MBE.getCode(), CR, LF };
 		return packet;
@@ -187,14 +193,16 @@ public class BTProtocol {
 
 	/**
 	 * Gets the mouse move packet.
-	 *
-	 * @param dx the dx
-	 * @param dy the dy
+	 * 
+	 * @param dx
+	 *            the dx
+	 * @param dy
+	 *            the dy
 	 * @return the mouse move packet
 	 */
 	public static byte[] getMouseMovePacket(short dx, short dy) {
-		byte[] packet = new byte[]{ PACKET_PREAMBLE, PacketID.MOVE_MOUSE.getCode(), 0, 0,
-				0, 0, CR, LF };
+		byte[] packet = new byte[] { PACKET_PREAMBLE,
+				PacketID.MOVE_MOUSE.getCode(), 0, 0, 0, 0, CR, LF };
 		ByteBuffer bb = ByteBuffer.allocate(4);
 		bb.order(ByteOrder.LITTLE_ENDIAN);
 		bb.putShort(dx);
@@ -209,14 +217,15 @@ public class BTProtocol {
 
 	/**
 	 * Gets the mouse wheel event packet.
-	 *
-	 * @param ticks the ticks
+	 * 
+	 * @param ticks
+	 *            the ticks
 	 * @return the mouse wheel event packet
 	 */
 	public static byte[] getMouseWheelEventPacket(short ticks) {
 		byte[] packet = new byte[] { PACKET_PREAMBLE,
 				PacketID.MOUSE_WHEEL_EVENT.getCode(), 0, 0, CR, LF };
-		
+
 		ByteBuffer bb = ByteBuffer.allocate(2);
 		bb.order(ByteOrder.LITTLE_ENDIAN);
 		bb.putShort(ticks);
@@ -225,38 +234,42 @@ public class BTProtocol {
 		packet[3] = bb.get(1);
 		return packet;
 	}
-	
+
 	/**
 	 * Gets the key event packet.
-	 *
-	 * @param ket the ket
-	 * @param keycode the keycode
+	 * 
+	 * @param ket
+	 *            the key event type
+	 * @param keycode
+	 *            the keycode
 	 * @return the key event packet
 	 */
-	public static byte[] getKeyEventPacket(KeyEventType ket, KeyCode keycode){
+	public static byte[] getKeyEventPacket(KeyEventType ket, KeyCode keycode) {
 		return getKeyEventPacket(ket, keycode.getKeyCode());
 	}
-	
-	 /**
- 	 * Gets the key event packet.
- 	 *
- 	 * @param ket the ket
- 	 * @param keycode the keycode
- 	 * @return the key event packet
- 	 */
- 	public static byte[] getKeyEventPacket(KeyEventType ket, int keycode){
+
+	/**
+	 * Gets the key event packet.
+	 * 
+	 * @param ket
+	 *            the key event type
+	 * @param keycode
+	 *            the keycode
+	 * @return the key event packet
+	 */
+	public static byte[] getKeyEventPacket(KeyEventType ket, int keycode) {
 		byte[] packet = new byte[] { PACKET_PREAMBLE,
 				PacketID.KEY_EVENT.getCode(), ket.getCode(), 0, 0, 0, 0, CR, LF };
-		
+
 		ByteBuffer bb = ByteBuffer.allocate(4);
 		bb.order(ByteOrder.LITTLE_ENDIAN);
 		bb.putInt(keycode);
-		
+
 		packet[3] = bb.get(0);
 		packet[4] = bb.get(1);
 		packet[5] = bb.get(2);
 		packet[6] = bb.get(3);
-		
+
 		return packet;
 	}
 }
