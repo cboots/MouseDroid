@@ -2,16 +2,16 @@ package com.cfms.android.mousedroid.test;
 
 import android.test.ActivityInstrumentationTestCase2;
 
-import com.cfms.android.mousedroid.activity.MotionMouseActivity;
+import com.cfms.android.mousedroid.activity.MouseActivity;
 
-public class MotionMouseActivityTest extends
-		ActivityInstrumentationTestCase2<MotionMouseActivity> {
+public class MouseActivityTest extends
+		ActivityInstrumentationTestCase2<MouseActivity> {
 
-	MotionMouseActivity mActivity;
+	MouseActivity mActivity;
 	
-	public MotionMouseActivityTest()
+	public MouseActivityTest()
 	{
-		super(MotionMouseActivity.class);
+		super(MouseActivity.class);
 	}
 	
     @Override
@@ -28,7 +28,7 @@ public class MotionMouseActivityTest extends
     
 
     public void testGetTag(){
-    	assertEquals("MotionMouseActivity", mActivity.getTag());
+    	assertEquals("MouseActivity", mActivity.getTag());
     	
     }
 }
