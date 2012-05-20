@@ -36,7 +36,7 @@
         </activity>
         <activity android:name=".activity.PreferencesActivity" >
         </activity>
-        <activity android:name=".activity.MotionMouseActivity" >
+        <activity android:name=".activity.MouseActivity" >
         </activity>
         <activity android:name=".activity.DeviceListActivity" >
         </activity>

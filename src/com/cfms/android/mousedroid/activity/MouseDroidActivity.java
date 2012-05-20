@@ -74,7 +74,7 @@ public class MouseDroidActivity extends BluetoothActivity {
 
 
 	public void testButton(final View target) {
-        Intent i = new Intent(this, MotionMouseActivity.class);
+        Intent i = new Intent(this, MouseActivity.class);
         startActivity(i);
     }
 
