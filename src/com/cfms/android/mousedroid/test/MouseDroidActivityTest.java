@@ -3,6 +3,7 @@ package com.cfms.android.mousedroid.test;
 import android.app.Activity;
 import android.app.Instrumentation.ActivityMonitor;
 import android.test.ActivityInstrumentationTestCase2;
+import android.test.UiThreadTest;
 import android.view.KeyEvent;
 
 import com.cfms.android.mousedroid.R;
@@ -31,12 +32,10 @@ public class MouseDroidActivityTest extends
     	assertNotNull(mActivity);
     }
     
-
     public void testGetTag(){
     	assertEquals("MouseDroidActivity", mActivity.getTag());
     	
     }
-    
     
     public void testMenuItemScan(){
     	ActivityMonitor am = getInstrumentation().addMonitor(DeviceListActivity.class.getName(), null, false);
@@ -50,6 +49,7 @@ public class MouseDroidActivityTest extends
     	a.finish();
     }
     
+    @UiThreadTest
     public void testBluetoothBindingOnActivityResultBug(){
     	getInstrumentation().callActivityOnPause(mActivity);
     	getInstrumentation().callActivityOnStop(mActivity);
