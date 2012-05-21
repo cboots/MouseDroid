@@ -395,6 +395,16 @@ public class BluetoothService extends Service {
 		reset();
 	}
 
+	
+	/**
+	 * Write.
+	 *
+	 * @param message the message
+	 */
+	public void write(byte[] message){
+		write(message, message.length);
+	}
+	
 	/**
 	 * Write.
 	 * 
