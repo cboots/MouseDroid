@@ -38,6 +38,8 @@
         </activity>
         <activity android:name="com.cfms.android.mousedroid.activity.MouseActivity" >
         </activity>
+        <activity android:name="com.cfms.android.mousedroid.activity.TrackpadActivity" >
+        </activity>
         <activity android:name="com.cfms.android.mousedroid.activity.DeviceListActivity" >
         </activity>
         <activity android:name="com.cfms.android.mousedroid.bluetooth.BluetoothActivity" >
