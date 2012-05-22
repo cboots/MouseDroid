@@ -19,6 +19,7 @@
     <uses-feature
         android:name="android.hardware.bluetooth"
         android:required="true" />
+    <uses-feature android:name="android.hardware.touchscreen.multitouch" android:required="true"/>
 
     <application
         android:name="com.cfms.android.mousedroid.MouseDroidApplication"
