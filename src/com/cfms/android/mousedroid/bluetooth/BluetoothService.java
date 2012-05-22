@@ -425,6 +425,21 @@ public class BluetoothService extends Service {
 		// Perform the write unsynchronized
 		r.write(message, length);
 	}
+	
+
+	protected void onBTMessageRead(byte[] buffer, int length) {
+		if (mHandler != null) {
+			mHandler.obtainMessage(BluetoothService.MESSAGE_READ, length, -1,
+					buffer).sendToTarget();
+		}
+	}
+
+	protected void onBTMessageWritten(byte[] buffer, int length) {
+		if (mHandler != null) {
+			mHandler.obtainMessage(BluetoothService.MESSAGE_WRITE, length, -1,
+					buffer).sendToTarget();
+		}
+	}
 
 	/**
 	 * Indicate that the connection attempt failed and notify the UI Activity.
@@ -446,19 +461,6 @@ public class BluetoothService extends Service {
 		reset();
 	}
 
-	protected void onBTMessageRead(byte[] buffer, int length) {
-		if (mHandler != null) {
-			mHandler.obtainMessage(BluetoothService.MESSAGE_READ, length, -1,
-					buffer).sendToTarget();
-		}
-	}
-
-	protected void onBTMessageWritten(byte[] buffer, int length) {
-		if (mHandler != null) {
-			mHandler.obtainMessage(BluetoothService.MESSAGE_WRITE, length, -1,
-					buffer).sendToTarget();
-		}
-	}
 
 	/**
 	 * This thread runs while attempting to make an outgoing connection with a
