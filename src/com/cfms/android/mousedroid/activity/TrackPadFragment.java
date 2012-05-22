@@ -64,6 +64,7 @@ public class TrackpadFragment extends Fragment implements TouchpadListener {
 	public boolean onButton1Touch(View yourButton, MotionEvent theMotion) {
 		switch (theMotion.getAction()) {
 		case MotionEvent.ACTION_DOWN:
+		case MotionEvent.ACTION_POINTER_DOWN:
 			if (mListener != null) {
 				mListener.onMouseButtonEvent(MouseButtonEvent.PRESS,
 						MouseButton.BUTTON1);
@@ -71,6 +72,7 @@ public class TrackpadFragment extends Fragment implements TouchpadListener {
 
 			break;
 		case MotionEvent.ACTION_UP:
+		case MotionEvent.ACTION_POINTER_UP:
 			if (mListener != null) {
 				mListener.onMouseButtonEvent(MouseButtonEvent.RELEASE,
 						MouseButton.BUTTON1);
@@ -83,12 +85,14 @@ public class TrackpadFragment extends Fragment implements TouchpadListener {
 	public boolean onButton3Touch(View yourButton, MotionEvent theMotion) {
 		switch (theMotion.getAction()) {
 		case MotionEvent.ACTION_DOWN:
+		case MotionEvent.ACTION_POINTER_DOWN:
 			if (mListener != null) {
 				mListener.onMouseButtonEvent(MouseButtonEvent.PRESS,
 						MouseButton.BUTTON3);
 			}
 			break;
 		case MotionEvent.ACTION_UP:
+		case MotionEvent.ACTION_POINTER_UP:
 			if (mListener != null) {
 				mListener.onMouseButtonEvent(MouseButtonEvent.RELEASE,
 						MouseButton.BUTTON3);

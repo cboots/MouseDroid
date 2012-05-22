@@ -15,16 +15,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal" >
+
         <Button
             android:id="@+id/trackpadButton1"
             android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_height="90dp"
+            android:layout_weight="1.00" />
+
         <Button
             android:id="@+id/trackpadButton2"
             android:layout_width="0dip"
-            android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_height="90dp"
+            android:layout_weight="1.00" />
+
     </LinearLayout>
 
 </LinearLayout>

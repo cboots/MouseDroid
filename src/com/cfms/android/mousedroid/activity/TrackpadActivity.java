@@ -11,7 +11,6 @@ import com.cfms.android.mousedroid.bluetooth.BluetoothActivity;
 
 public class TrackpadActivity extends BluetoothActivity implements TrackpadListener{
 
-
 	private TrackpadFragment mTrackpadFragment;
 	
 	public TrackpadActivity() {

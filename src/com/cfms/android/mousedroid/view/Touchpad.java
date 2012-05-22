@@ -10,22 +10,53 @@ import com.cfms.android.mousedroid.BTProtocol.MouseButton;
 import com.cfms.android.mousedroid.BTProtocol.MouseButtonEvent;
 import com.cfms.android.mousedroid.utils.DebugLog;
 
+/**
+ * The Class Touchpad.
+ */
 public class Touchpad extends View {
 
+	private static final String TAG = "Touchpad";
+
+	static private boolean D = true;
+	
+	/** The m listener. */
 	private TouchpadListener mListener;
 
+	/**
+	 * Instantiates a new touchpad.
+	 *
+	 * @param context the context
+	 */
 	public Touchpad(Context context) {
 		super(context);
 	}
 
+	/**
+	 * Instantiates a new touchpad.
+	 *
+	 * @param context the context
+	 * @param attrs the attrs
+	 */
 	public Touchpad(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 
+	/**
+	 * Instantiates a new touchpad.
+	 *
+	 * @param context the context
+	 * @param attrs the attrs
+	 * @param defStyle the def style
+	 */
 	public Touchpad(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 	}
 
+	
+	/**
+	 * Self test function.  
+	 * Generates a drag event from the upper left corner down and to the right dy = 20, dx = 10
+	 */
 	public void selfTest() {
 		long downTime = SystemClock.uptimeMillis();
 		long eventTime = SystemClock.uptimeMillis();
@@ -47,13 +78,21 @@ public class Touchpad extends View {
 	
 	
 	
+	/** The dragging. */
 	boolean dragging = false;
+	
+	/** The last x. */
 	int lastX = -1;
+	
+	/** The last y. */
 	int lastY = -1;
 	
+	/* (non-Javadoc)
+	 * @see android.view.View#onTouchEvent(android.view.MotionEvent)
+	 */
 	@Override
 	public boolean onTouchEvent(MotionEvent event){
-		DebugLog.D("Touchpad", "onTouchEvent: " + event.toString());
+		if(D) DebugLog.D(TAG, "onTouchEvent: " + event.toString());
         int eventaction = event.getAction();   
       
         int X = (int)event.getX();
@@ -79,22 +118,63 @@ public class Touchpad extends View {
 	}
 	
 
+	/**
+	 * On move.
+	 *
+	 * @param dx the dx
+	 * @param dy the dy
+	 */
 	private void onMove(int dx, int dy) {
 		if(mListener != null){
+			if(D) DebugLog.D(TAG, "onMove" + dx + "," +dy);
 			mListener.onTouchpadMouseMove(dx, dy);
 			
 		}
 	}
 
+	/**
+	 * Sets the touchpad listener.
+	 *
+	 * @param listener the new touchpad listener
+	 */
 	public void setTouchpadListener(TouchpadListener listener) {
 		mListener = listener;
 	}
 
+	/**
+	 * The listener interface for receiving touchpad events.
+	 * The class that is interested in processing a touchpad
+	 * event implements this interface, and the object created
+	 * with that class is registered with a component using the
+	 * component's <code>addTouchpadListener<code> method. When
+	 * the touchpad event occurs, that object's appropriate
+	 * method is invoked.
+	 *
+	 * @see TouchpadEvent
+	 */
 	public interface TouchpadListener {
+		
+		/**
+		 * On touchpad mouse move.
+		 *
+		 * @param dx the dx
+		 * @param dy the dy
+		 */
 		public void onTouchpadMouseMove(int dx, int dy);
 
+		/**
+		 * On touchpad mouse button event.
+		 *
+		 * @param mbe the mbe
+		 * @param mb the mb
+		 */
 		public void onTouchpadMouseButtonEvent(MouseButtonEvent mbe, MouseButton mb);
 
+		/**
+		 * On touchpad scroll event.
+		 *
+		 * @param ticks the ticks
+		 */
 		public void onTouchpadScrollEvent(int ticks);
 
 	}

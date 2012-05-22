@@ -38,6 +38,8 @@ public class BluetoothService extends Service {
 	/** The Constant TAG. */
 	private final static String TAG = "BluetoothService";
 
+	private final boolean D = true;
+
 	// Binder given to clients
 	/** The Binder. */
 	private final IBinder mBinder = new BluetoothBinder();
@@ -205,7 +207,6 @@ public class BluetoothService extends Service {
 		super.onDestroy();
 	}
 
-
 	/**
 	 * Sets the message handler.
 	 * 
@@ -290,7 +291,7 @@ public class BluetoothService extends Service {
 
 	/**
 	 * Return the current connection state.
-	 *
+	 * 
 	 * @return the state
 	 */
 	public synchronized int getState() {
@@ -301,7 +302,7 @@ public class BluetoothService extends Service {
 	 * Disconnect.
 	 */
 	public synchronized void disconnect() {
-		
+
 		// Create temporary object
 		ConnectedThread r;
 		// Synchronize a copy of the ConnectedThread
@@ -340,9 +341,8 @@ public class BluetoothService extends Service {
 		if (mState == STATE_CONNECTED) {
 			// Need to safely disconnect
 			disconnect();
-		} else if(mState == STATE_CONNECTING){
-			if(mConnectThread != null)
-			{
+		} else if (mState == STATE_CONNECTING) {
+			if (mConnectThread != null) {
 				mConnectThread.cancel();
 				mConnectThread = null;
 			}
@@ -395,16 +395,16 @@ public class BluetoothService extends Service {
 		reset();
 	}
 
-	
 	/**
 	 * Write.
-	 *
-	 * @param message the message
+	 * 
+	 * @param message
+	 *            the message
 	 */
-	public void write(byte[] message){
+	public void write(byte[] message) {
 		write(message, message.length);
 	}
-	
+
 	/**
 	 * Write.
 	 * 
@@ -444,6 +444,20 @@ public class BluetoothService extends Service {
 
 		// Start the service over to set idle mode
 		reset();
+	}
+
+	protected void onBTMessageRead(byte[] buffer, int length) {
+		if (mHandler != null) {
+			mHandler.obtainMessage(BluetoothService.MESSAGE_READ, length, -1,
+					buffer).sendToTarget();
+		}
+	}
+
+	protected void onBTMessageWritten(byte[] buffer, int length) {
+		if (mHandler != null) {
+			mHandler.obtainMessage(BluetoothService.MESSAGE_WRITE, length, -1,
+					buffer).sendToTarget();
+		}
 	}
 
 	/**
@@ -607,9 +621,9 @@ public class BluetoothService extends Service {
 
 					// Send the obtained bytes to the UI Activity
 					if (bytes > 0 && mHandler != null) {
-						mHandler.obtainMessage(BluetoothService.MESSAGE_READ,
-								bytes, -1, buffer).sendToTarget();
+						onBTMessageRead(buffer, bytes);
 					} else {
+						DebugLog.D(TAG, "Empty Read");
 						ByteBufferFactory.releaseBuffer(buffer);
 					}
 				} catch (IOException e) {
@@ -635,13 +649,12 @@ public class BluetoothService extends Service {
 		 */
 		public void write(byte[] buffer, int length) {
 			try {
+				if (D)
+					DebugLog.D(TAG, "write length=" + length);
 				mmOutStream.write(buffer, 0, length);
 
 				// Share the sent message back to the UI Activity
-				if (mHandler != null) {
-					mHandler.obtainMessage(BluetoothService.MESSAGE_WRITE,
-							length, -1, buffer).sendToTarget();
-				}
+				onBTMessageWritten(buffer, length);
 			} catch (IOException e) {
 				DebugLog.E(TAG, "Exception during write", e);
 			}
@@ -654,15 +667,11 @@ public class BluetoothService extends Service {
 			mmDisconnected = true;
 			// Disconnect packet
 			byte[] buffer = { BTProtocol.PACKET_PREAMBLE,
-					PacketID.DISCONNECT.getCode(), BTProtocol.CR,
-					BTProtocol.LF };
+					PacketID.DISCONNECT.getCode(), BTProtocol.CR, BTProtocol.LF };
 			try {
 				mmOutStream.write(buffer, 0, 4);
 				// Share the sent message back to the UI Activity
-				if (mHandler != null) {
-					mHandler.obtainMessage(BluetoothService.MESSAGE_WRITE, 4,
-							-1, buffer).sendToTarget();
-				}
+				onBTMessageWritten(buffer, 4);
 			} catch (IOException e) {
 				DebugLog.E(TAG, "Exception during disconnect", e);
 			}
