@@ -19,7 +19,7 @@ import com.cfms.mousedroid.pc.MyLog;
 public class BluetoothServer {
 
 	/** Debug log flag. */
-	protected boolean D = true;
+	protected boolean D = false;
 
 	// Server string must not have any dashes in the ID.
 	/** The Constant uuidStr. */
@@ -109,7 +109,7 @@ public class BluetoothServer {
 	 * @param length
 	 *            the length
 	 */
-	private void onBTMessageRead(byte[] message, int length) {
+	protected void onBTMessageRead(byte[] message, int length) {
 		if(D) MyLog.log("onBTMessageRead: len="+ length );
 		if (mEventListener != null) {
 			mEventListener.onBTMessageRead(message, length);
@@ -126,7 +126,7 @@ public class BluetoothServer {
 	 * @param length
 	 *            the length of the message
 	 */
-	private void onBTMessageWritten(byte[] message, int length) {
+	protected void onBTMessageWritten(byte[] message, int length) {
 		if(D) MyLog.log("onBTMessageWritten: len="+ length );
 		if (mEventListener != null) {
 			mEventListener.onBTMessageWritten(message, length);

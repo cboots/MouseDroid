@@ -28,6 +28,7 @@ import com.cfms.mousedroid.pc.bluetooth.BluetoothServer.BTEventListener;
 
 public class MainWindow extends JFrame implements BTEventListener {
 
+	protected boolean D = false;
 	public static final byte MajorVersion = 1;
 	public static final byte MinorVersion = 0;
 	
@@ -169,11 +170,11 @@ public class MainWindow extends JFrame implements BTEventListener {
 		switch(ID)
 		{
 		case DISCONNECT:
-			MyLog.log("Disconnect");
+			if(D) MyLog.log("Disconnect");
 			mBTServer.disconnect();
 			break;
 		case GET_VERSION:
-			MyLog.log("GetVersion");
+			if(D) MyLog.log("GetVersion");
 			sendVersion();
 			break;
 		case MOVE_MOUSE:
@@ -186,7 +187,7 @@ public class MainWindow extends JFrame implements BTEventListener {
 			int dx = bb.getShort(0);
 			int dy = bb.getShort(2);
 			
-			MyLog.log("Move Mouse: " + dx + "," + dy);
+			if(D) MyLog.log("Move Mouse: " + dx + "," + dy);
 			mouseMoveEvent(dx, dy);
 			break;
 		case MOUSE_BUTTON_EVENT:
@@ -220,11 +221,11 @@ public class MainWindow extends JFrame implements BTEventListener {
 		
 		switch(MBE){
 		case PRESS:
-			MyLog.log("Mouse Press: " + MB.toString());
+			if(D) MyLog.log("Mouse Press: " + MB.toString());
 			mRobot.mousePress(robotButtonCode);
 			break;
 		case RELEASE:
-			MyLog.log("Mouse Release: " + MB.toString());
+			if(D) MyLog.log("Mouse Release: " + MB.toString());
 			mRobot.mouseRelease(robotButtonCode);	
 			break;
 		}
