@@ -64,6 +64,7 @@ public class MainWindow extends JFrame implements BTEventListener {
 	 */
 	public MainWindow() {
 		initComponents();
+		mBTServer = new BluetoothServer();
 		try {
 			mRobot = new Robot();
 		} catch (AWTException e) {
@@ -96,7 +97,6 @@ public class MainWindow extends JFrame implements BTEventListener {
 	}
 
 	protected void do_btnNewButton_actionPerformed(ActionEvent arg0) {
-		mBTServer = new BluetoothServer();
 		mBTServer.setEventListener(this);
 		mBTServer.start();
 		
@@ -116,6 +116,9 @@ public class MainWindow extends JFrame implements BTEventListener {
 		}
 	}
 
+	
+	
+	
 	@Override
 	public void onError(int errorCode) {
 		// TODO Auto-generated method stub

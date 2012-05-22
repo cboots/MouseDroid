@@ -10,6 +10,9 @@ import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
 import javax.microedition.io.StreamConnectionNotifier;
 
+import com.cfms.handler.Handler;
+import com.cfms.handler.Looper;
+import com.cfms.handler.Message;
 import com.cfms.mousedroid.pc.MyLog;
 
 // TODO: Auto-generated Javadoc
@@ -36,26 +39,88 @@ public class BluetoothServer {
 
 	/** The Constant STATE_CONNECTED. */
 	public static final int STATE_CONNECTED = 2;
-	
+
+	/** The Constant MESSAGE_STATE_CHANGE. */
+	public static final int MESSAGE_STATE_CHANGE = 0;
+
+	/** The Constant MESSAGE_WRITE. */
+	public static final int MESSAGE_WRITE = 1;
+
+	/** The Constant MESSAGE_READ. */
+	public static final int MESSAGE_READ = 2;
+
+	/** The Constant MESSAGE_ERROR. */
+	public static final int MESSAGE_ERROR = 3;
+
 	/** The Constant ERRORCODE_CONNECTION_LOST. */
 	public static final int ERRORCODE_CONNECTION_LOST = 2;
 
 	/** The m listening thread. */
-	ListeningThread mListeningThread;
+	private ListeningThread mListeningThread;
 
 	/** The m connected thread. */
-	ConnectedThread mConnectedThread;
+	private ConnectedThread mConnectedThread;
+
+	private LooperThread mLooperThread;
 
 	/** The m state. */
 	int mState = STATE_NONE;
 
 	BTEventListener mEventListener = null;
 
+	private Handler mHandler = null;
+
 	/**
 	 * Instantiates a new bluetooth server.
 	 */
 	public BluetoothServer() {
+	}
 
+	class LooperThread extends Thread {
+
+		public void run() {
+			MyLog.log("LooperThread Running");
+			Looper.prepare();
+
+			mHandler = new Handler() {
+				@Override
+				public void handleMessage(Message msg) {
+					switch (msg.what) {
+					case MESSAGE_STATE_CHANGE:
+						if (mEventListener != null) {
+							mEventListener.onStateChanged(msg.arg1, msg.arg2);
+						}
+						break;
+					case MESSAGE_WRITE:
+						byte[] writeBuf = (byte[]) msg.obj;
+						int length = msg.arg1;
+						if (mEventListener != null) {
+							mEventListener.onBTMessageWritten(writeBuf, length);
+						}
+						// Release the buffer
+						ByteBufferFactory.releaseBuffer(writeBuf);
+						break;
+					case MESSAGE_READ:
+						byte[] readBuf = (byte[]) msg.obj;
+						length = msg.arg1;
+						if (mEventListener != null) {
+							mEventListener.onBTMessageRead(readBuf, length);
+						}
+						// Release the buffer
+						ByteBufferFactory.releaseBuffer(readBuf);
+						break;
+					case MESSAGE_ERROR:
+						if (mEventListener != null) {
+							int errorCode = msg.arg1;
+							mEventListener.onError(errorCode);
+						}
+						break;
+					}
+				}
+			};
+
+			Looper.loop();
+		}
 	}
 
 	public void setEventListener(BTEventListener listener) {
@@ -66,6 +131,18 @@ public class BluetoothServer {
 	 * Start.
 	 */
 	public synchronized void start() {
+		//Ensure hander is set up
+		if(mHandler == null){
+			if(mLooperThread != null){
+				MyLog.log("Error, looper thread invalidated");
+			}else{
+				mLooperThread = new LooperThread();
+				mLooperThread.start();
+				//Loop until LooperThread inited
+				while(mHandler == null);
+			}
+		}
+		
 		if (mConnectedThread != null) {
 			mConnectedThread.cancel();
 			mConnectedThread = null;
@@ -110,12 +187,12 @@ public class BluetoothServer {
 	 *            the length
 	 */
 	protected void onBTMessageRead(byte[] message, int length) {
-		if(D) MyLog.log("onBTMessageRead: len="+ length );
-		if (mEventListener != null) {
-			mEventListener.onBTMessageRead(message, length);
+		if (D)
+			MyLog.log("onBTMessageRead: len=" + length);
+		if (mHandler != null) {
+			mHandler.obtainMessage(MESSAGE_READ, length, -1, message)
+					.sendToTarget();
 		}
-		// Release the buffer
-		ByteBufferFactory.releaseBuffer(message);
 	}
 
 	/**
@@ -127,12 +204,12 @@ public class BluetoothServer {
 	 *            the length of the message
 	 */
 	protected void onBTMessageWritten(byte[] message, int length) {
-		if(D) MyLog.log("onBTMessageWritten: len="+ length );
-		if (mEventListener != null) {
-			mEventListener.onBTMessageWritten(message, length);
+		if (D)
+			MyLog.log("onBTMessageWritten: len=" + length);
+		if (mHandler != null) {
+			mHandler.obtainMessage(MESSAGE_WRITE, length, -1, message)
+					.sendToTarget();
 		}
-		// Release the buffer
-		ByteBufferFactory.releaseBuffer(message);
 	}
 
 	/**
@@ -140,10 +217,14 @@ public class BluetoothServer {
 	 * handle this event
 	 */
 	private void onBTStateChanged(int oldState, int newState) {
-		if(D) MyLog.log("onBTStateChanged: "+ oldState + "->" + newState);
-		if (mEventListener != null) {
-			mEventListener.onStateChanged(oldState, newState);
+
+		if (D)
+			MyLog.log("onBTStateChanged: " + oldState + "->" + newState);
+		if (mHandler != null) {
+			Message msg = mHandler.obtainMessage(MESSAGE_STATE_CHANGE, oldState, newState);
+			msg.sendToTarget();
 		}
+
 	}
 
 	/**
@@ -153,12 +234,12 @@ public class BluetoothServer {
 	 *            the error code
 	 */
 	private void onBTError(int errorCode) {
-		if(D) MyLog.log("onBTError: "+ errorCode);
-		if (mEventListener != null) {
-			mEventListener.onError(errorCode);
+		if (D)
+			MyLog.log("onBTError: " + errorCode);
+		if (mHandler != null) {
+			mHandler.obtainMessage(MESSAGE_ERROR, errorCode, -1);
 		}
 	}
-
 
 	/**
 	 * Write.
@@ -180,8 +261,7 @@ public class BluetoothServer {
 		// Perform the write unsynchronized
 		r.write(message, length);
 	}
-	
-	
+
 	/**
 	 * Connected.
 	 * 
@@ -189,7 +269,6 @@ public class BluetoothServer {
 	 *            the connection
 	 */
 	private synchronized void connected(StreamConnection connection) {
-		// TODO allow only one connection
 		// Establish connection
 		if (mListeningThread != null) {
 			mListeningThread.cancel();
@@ -221,7 +300,7 @@ public class BluetoothServer {
 		// Restart the server
 		start();
 	}
-	
+
 	/**
 	 * The Class ListeningThread.
 	 */
@@ -234,7 +313,7 @@ public class BluetoothServer {
 		StreamConnection mmConnection = null;
 
 		boolean mmSecure = false;
-		
+
 		private boolean mmCanceled = false;
 
 		/**
@@ -268,9 +347,9 @@ public class BluetoothServer {
 			LocalDevice local = null;
 			try {
 				local = LocalDevice.getLocalDevice();
-				if(local.getDiscoverable() != DiscoveryAgent.GIAC)
+				if (local.getDiscoverable() != DiscoveryAgent.GIAC)
 					local.setDiscoverable(DiscoveryAgent.GIAC);
-				
+
 				String url;
 				if (mmSecure) {
 					url = "btspp://localhost:" + uuidStrSecure
@@ -287,7 +366,8 @@ public class BluetoothServer {
 			}
 			while (mState == STATE_LISTEN) {
 				try {
-					if(D) MyLog.log("waiting for connection...");
+					if (D)
+						MyLog.log("waiting for connection...");
 					mmConnection = mmNotifier.acceptAndOpen();
 
 					if (mmConnection != null) {
@@ -307,10 +387,10 @@ public class BluetoothServer {
 						}
 					}
 				} catch (Exception e) {
-					if(!mmCanceled)
+					if (!mmCanceled)
 						e.printStackTrace();
-					else
-						if(D) MyLog.log("ListenThread canceled");
+					else if (D)
+						MyLog.log("ListenThread canceled");
 					return;
 				}
 			}
@@ -341,7 +421,6 @@ public class BluetoothServer {
 
 		/** The m connection. */
 		private StreamConnection mmConnection;
-
 
 		InputStream mmInputStream;
 		OutputStream mmOutputStream;
@@ -382,24 +461,24 @@ public class BluetoothServer {
 					buffer = ByteBufferFactory.getBuffer();
 					// Read from the InputStream
 					bytes = mmInputStream.read(buffer);
-					if(bytes > 0)
+					if (bytes > 0)
 						onBTMessageRead(buffer, bytes);
 					else
 						ByteBufferFactory.releaseBuffer(buffer);
-					
+
 				} catch (IOException e) {
 					MyLog.log("Connection Terminated");
-					connectionLost();//Restarts service
-					
+					connectionLost();// Restarts service
+
 					break;
 				}
 			}
-			
-			if(!mmCanceled){
+
+			if (!mmCanceled) {
 				onBTError(ERRORCODE_CONNECTION_LOST);
 			}
 		}
-		
+
 		/**
 		 * Write to the connected OutStream.
 		 * 
@@ -420,20 +499,18 @@ public class BluetoothServer {
 			}
 		}
 
-		
 		/**
 		 * Cancel.
 		 */
 		public void cancel() {
 			try {
-				mmCanceled  = true;
+				mmCanceled = true;
 				mmInputStream.close();
 				mmConnection.close();
 			} catch (IOException ex) {
 				ex.printStackTrace();
 			}
 		}
-
 
 	}
 
