@@ -131,18 +131,28 @@ public class BluetoothServer {
 	 * Start.
 	 */
 	public synchronized void start() {
-		//Ensure hander is set up
-		if(mHandler == null){
-			if(mLooperThread != null){
+		// Ensure hander is set up
+		if (mHandler == null) {
+			if (mLooperThread != null) {
 				MyLog.log("Error, looper thread invalidated");
-			}else{
+			} else {
 				mLooperThread = new LooperThread();
 				mLooperThread.start();
-				//Loop until LooperThread inited
-				while(mHandler == null);
+				// Loop until LooperThread inited
+				while (mHandler == null) {
+					try {
+
+						this.wait(100);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					MyLog.log("LooperThread waiting");
+
+				}
 			}
 		}
-		
+
 		if (mConnectedThread != null) {
 			mConnectedThread.cancel();
 			mConnectedThread = null;
@@ -221,7 +231,8 @@ public class BluetoothServer {
 		if (D)
 			MyLog.log("onBTStateChanged: " + oldState + "->" + newState);
 		if (mHandler != null) {
-			Message msg = mHandler.obtainMessage(MESSAGE_STATE_CHANGE, oldState, newState);
+			Message msg = mHandler.obtainMessage(MESSAGE_STATE_CHANGE,
+					oldState, newState);
 			msg.sendToTarget();
 		}
 
@@ -344,6 +355,7 @@ public class BluetoothServer {
 		 * Wait for connection.
 		 */
 		private void waitForConnection() {
+			MyLog.log("Listening Thread Running");
 			LocalDevice local = null;
 			try {
 				local = LocalDevice.getLocalDevice();
