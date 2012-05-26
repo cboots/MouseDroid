@@ -200,18 +200,23 @@ public class BTProtocol {
 	 *            the dy
 	 * @return the mouse move packet
 	 */
-	public static byte[] getMouseMovePacket(short dx, short dy) {
+	public static byte[] getMouseMovePacket(int dx, int dy) {
 		byte[] packet = new byte[] { PACKET_PREAMBLE,
-				PacketID.MOVE_MOUSE.getCode(), 0, 0, 0, 0, CR, LF };
-		ByteBuffer bb = ByteBuffer.allocate(4);
+				PacketID.MOVE_MOUSE.getCode(), 0, 0, 0, 0, 0, 0, 0, 0, CR, LF };
+		ByteBuffer bb = ByteBuffer.allocate(8);
 		bb.order(ByteOrder.LITTLE_ENDIAN);
-		bb.putShort(dx);
-		bb.putShort(dy);
+		bb.putInt(dx);
+		bb.putInt(dy);
 
 		packet[2] = bb.get(0);
 		packet[3] = bb.get(1);
 		packet[4] = bb.get(2);
 		packet[5] = bb.get(3);
+		packet[6] = bb.get(4);
+		packet[7] = bb.get(5);
+		packet[8] = bb.get(6);
+		packet[9] = bb.get(7);
+		
 		return packet;
 	}
 
@@ -222,16 +227,19 @@ public class BTProtocol {
 	 *            the ticks
 	 * @return the mouse wheel event packet
 	 */
-	public static byte[] getMouseWheelEventPacket(short ticks) {
+	public static byte[] getMouseWheelEventPacket(int ticks) {
 		byte[] packet = new byte[] { PACKET_PREAMBLE,
-				PacketID.MOUSE_WHEEL_EVENT.getCode(), 0, 0, CR, LF };
+				PacketID.MOUSE_WHEEL_EVENT.getCode(), 0, 0, 0, 0, CR, LF };
 
-		ByteBuffer bb = ByteBuffer.allocate(2);
+		ByteBuffer bb = ByteBuffer.allocate(4);
 		bb.order(ByteOrder.LITTLE_ENDIAN);
-		bb.putShort(ticks);
+		bb.putInt(ticks);
 
 		packet[2] = bb.get(0);
 		packet[3] = bb.get(1);
+		packet[4] = bb.get(2);
+		packet[5] = bb.get(3);
+		
 		return packet;
 	}
 
