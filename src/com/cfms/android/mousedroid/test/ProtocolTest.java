@@ -59,15 +59,21 @@ public class ProtocolTest extends
     
     
     public void testMouseMove(){
-    	byte[] packet  = BTProtocol.getMouseMovePacket((short)0x0f01, (short)0xfff0);
+    	byte[] packet  = BTProtocol.getMouseMovePacket(0x0f010203, 0xfff01415);
+    	assertNotNull(packet);
+    	assertEquals(12, packet.length);
     	assertEquals(packet[0], (byte)0xAA);
     	assertEquals(packet[1], (byte)0x04);
-    	assertEquals(packet[2], (byte)0x01);
-    	assertEquals(packet[3], (byte)0x0f);
-    	assertEquals(packet[4], (byte)0xf0);
-    	assertEquals(packet[5], (byte)0xff);
-    	assertEquals(packet[6], (byte)0x0D);
-    	assertEquals(packet[7], (byte)0x0A);
+    	assertEquals(packet[2], (byte)0x03);
+    	assertEquals(packet[3], (byte)0x02);
+    	assertEquals(packet[4], (byte)0x01);
+    	assertEquals(packet[5], (byte)0x0f);
+    	assertEquals(packet[6], (byte)0x15);
+    	assertEquals(packet[7], (byte)0x14);
+    	assertEquals(packet[8], (byte)0xf0);
+    	assertEquals(packet[9], (byte)0xff);
+    	assertEquals(packet[10], (byte)0x0D);
+    	assertEquals(packet[11], (byte)0x0A);
     }
 
     public void testMouseButtonEvent(){
@@ -90,21 +96,29 @@ public class ProtocolTest extends
     
 
     public void testMouseWheelEvent(){
-    	byte[] packet  = BTProtocol.getMouseWheelEventPacket((short) 0xf01);
+    	byte[] packet  = BTProtocol.getMouseWheelEventPacket(0x01020f01);
+    	assertNotNull(packet);
+    	assertEquals(8, packet.length);
     	assertEquals(packet[0], (byte)0xAA);
     	assertEquals(packet[1], (byte)0x06);
     	assertEquals(packet[2], (byte)0x01);
     	assertEquals(packet[3], (byte)0x0f);
-    	assertEquals(packet[4], (byte)0x0D);
-    	assertEquals(packet[5], (byte)0x0A);
+    	assertEquals(packet[4], (byte)0x02);
+    	assertEquals(packet[5], (byte)0x01);
+    	assertEquals(packet[6], (byte)0x0D);
+    	assertEquals(packet[7], (byte)0x0A);
 
-    	byte[] packet1  = BTProtocol.getMouseWheelEventPacket((short) 0xfff1);
-    	assertEquals(packet1[0], (byte)0xAA);
-    	assertEquals(packet1[1], (byte)0x06);
-    	assertEquals(packet1[2], (byte)0xf1);
-    	assertEquals(packet1[3], (byte)0xff);
-    	assertEquals(packet1[4], (byte)0x0D);
-    	assertEquals(packet1[5], (byte)0x0A);
+    	packet  = BTProtocol.getMouseWheelEventPacket(0xfffe0f01);
+    	assertNotNull(packet);
+    	assertEquals(8, packet.length);
+    	assertEquals(packet[0], (byte)0xAA);
+    	assertEquals(packet[1], (byte)0x06);
+    	assertEquals(packet[2], (byte)0x01);
+    	assertEquals(packet[3], (byte)0x0f);
+    	assertEquals(packet[4], (byte)0xfe);
+    	assertEquals(packet[5], (byte)0xff);
+    	assertEquals(packet[6], (byte)0x0D);
+    	assertEquals(packet[7], (byte)0x0A);
     }
     
     public void testKeyEventPress(){
