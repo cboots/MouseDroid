@@ -181,22 +181,33 @@ public class MainWindow extends JFrame implements BTEventListener {
 			sendVersion();
 			break;
 		case MOVE_MOUSE:
-			ByteBuffer bb = ByteBuffer.allocate(4);
+			ByteBuffer bb = ByteBuffer.allocate(8);
 			bb.order(ByteOrder.LITTLE_ENDIAN);
-			bb.put(commandBuffer[2]);
-			bb.put(commandBuffer[3]);
-			bb.put(commandBuffer[4]);
-			bb.put(commandBuffer[5]);
-			int dx = bb.getShort(0);
-			int dy = bb.getShort(2);
+			bb.put(commandBuffer, 2, 8);
+			int dx = bb.getInt(0);
+			int dy = bb.getInt(4);
 			
 			if(D) MyLog.log("Move Mouse: " + dx + "," + dy);
 			mouseMoveEvent(dx, dy);
+			break;
+
+		case MOUSE_WHEEL_EVENT:
+			bb = ByteBuffer.allocate(4);
+			bb.order(ByteOrder.LITTLE_ENDIAN);
+			bb.put(commandBuffer, 2, 4);
+			int ticks = bb.getInt(0);
+			
+			if(D) MyLog.log("Move Wheel: " + ticks);
+			mouseWheelEvent(ticks);
 			break;
 		case MOUSE_BUTTON_EVENT:
 			mouseButtonEvent(commandBuffer[2], commandBuffer[3]);
 			break;
 		}
+	}
+
+	private void mouseWheelEvent(int ticks) {
+		mRobot.mouseWheel(ticks);
 	}
 
 	private void mouseMoveEvent(int dx, int dy) {
