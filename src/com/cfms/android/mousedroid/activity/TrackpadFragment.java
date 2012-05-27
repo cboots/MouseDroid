@@ -11,10 +11,12 @@ import android.widget.Button;
 import com.cfms.android.mousedroid.BTProtocol.MouseButton;
 import com.cfms.android.mousedroid.BTProtocol.MouseButtonEvent;
 import com.cfms.android.mousedroid.R;
+import com.cfms.android.mousedroid.view.ScrollSlider;
+import com.cfms.android.mousedroid.view.ScrollSlider.ScrollListener;
 import com.cfms.android.mousedroid.view.Touchpad;
 import com.cfms.android.mousedroid.view.Touchpad.TouchpadListener;
 
-public class TrackpadFragment extends Fragment implements TouchpadListener {
+public class TrackpadFragment extends Fragment implements TouchpadListener, ScrollListener {
 
 	private TrackpadListener mListener;
 
@@ -27,10 +29,12 @@ public class TrackpadFragment extends Fragment implements TouchpadListener {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.trackpad_fragment, container, false);
-		Button button1 = (Button) v.findViewById(R.id.trackpadButton1);
-		Button button3 = (Button) v.findViewById(R.id.trackpadButton2);
+		Button button1 = (Button) v.findViewById(R.id.trackpad_button1);
+		Button button3 = (Button) v.findViewById(R.id.trackpad_button3);
 		Touchpad touchpad = (Touchpad) v.findViewById(R.id.touchpad);
 		touchpad.setTouchpadListener(this);
+		ScrollSlider slider = (ScrollSlider) v.findViewById(R.id.scroll_slider);
+		slider.setScrollListener(this);
 		
 		button1.setOnTouchListener(new View.OnTouchListener() {
 
@@ -140,6 +144,14 @@ public class TrackpadFragment extends Fragment implements TouchpadListener {
 			mListener.onScrollEvent(ticks);
 		}
 		
+	}
+
+	@Override
+	public void onScrollEvent(int ticks) {
+		if(mListener != null)
+		{
+			mListener.onScrollEvent(ticks);
+		}
 	}
 
 }

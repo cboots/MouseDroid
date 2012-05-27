@@ -4,51 +4,49 @@ import android.content.Context;
 import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.widget.RelativeLayout;
+import android.view.View;
 
-import com.cfms.android.mousedroid.BTProtocol.MouseButton;
-import com.cfms.android.mousedroid.BTProtocol.MouseButtonEvent;
 import com.cfms.android.mousedroid.utils.DebugLog;
 
 /**
  * The Class Touchpad.
  */
-public class Touchpad extends RelativeLayout {
+public class ScrollSlider extends View {
 
 	private static final String TAG = "Touchpad";
 
 	static private boolean D = true;
 	
 	/** The m listener. */
-	private TouchpadListener mListener;
+	private ScrollListener mListener;
 
 	/**
-	 * Instantiates a new touchpad.
+	 * Instantiates a new scroll slider.
 	 *
 	 * @param context the context
 	 */
-	public Touchpad(Context context) {
+	public ScrollSlider(Context context) {
 		super(context);
 	}
 
 	/**
-	 * Instantiates a new touchpad.
+	 * Instantiates a new scroll slider.
 	 *
 	 * @param context the context
 	 * @param attrs the attrs
 	 */
-	public Touchpad(Context context, AttributeSet attrs) {
+	public ScrollSlider(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	}
 
 	/**
-	 * Instantiates a new touchpad.
+	 * Instantiates a new scroll slider.
 	 *
 	 * @param context the context
 	 * @param attrs the attrs
 	 * @param defStyle the def style
 	 */
-	public Touchpad(Context context, AttributeSet attrs, int defStyle) {
+	public ScrollSlider(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 	}
 
@@ -105,13 +103,13 @@ public class Touchpad extends RelativeLayout {
 			lastY = Y;
 			break;
         case MotionEvent.ACTION_MOVE:
-        	onMove(X - lastX, Y - lastY);
+        	onScroll(Y - lastY);
 			lastX = X;
 			lastY = Y;
 			break;
         case MotionEvent.ACTION_UP:
 			dragging = false;
-			onMove(X - lastX, Y - lastY);
+			onScroll(Y - lastY);
         }
 		
 		return true;
@@ -121,23 +119,22 @@ public class Touchpad extends RelativeLayout {
 	/**
 	 * On move.
 	 *
-	 * @param dx the dx
-	 * @param dy the dy
+	 * @param dy
 	 */
-	private void onMove(int dx, int dy) {
+	private void onScroll(int dy) {
 		if(mListener != null){
-			if(D) DebugLog.D(TAG, "onMove" + dx + "," +dy);
-			mListener.onTouchpadMouseMove(dx, dy);
+			if(D) DebugLog.D(TAG, "onScroll: " + dy);
+			mListener.onScrollEvent(dy);
 			
 		}
 	}
 
 	/**
-	 * Sets the touchpad listener.
+	 * Sets the listener.
 	 *
-	 * @param listener the new touchpad listener
+	 * @param listener the new  listener
 	 */
-	public void setTouchpadListener(TouchpadListener listener) {
+	public void setScrollListener(ScrollListener listener) {
 		mListener = listener;
 	}
 
@@ -152,30 +149,14 @@ public class Touchpad extends RelativeLayout {
 	 *
 	 * @see TouchpadEvent
 	 */
-	public interface TouchpadListener {
+	public interface ScrollListener {
 		
-		/**
-		 * On touchpad mouse move.
-		 *
-		 * @param dx the dx
-		 * @param dy the dy
-		 */
-		public void onTouchpadMouseMove(int dx, int dy);
-
-		/**
-		 * On touchpad mouse button event.
-		 *
-		 * @param mbe the mbe
-		 * @param mb the mb
-		 */
-		public void onTouchpadMouseButtonEvent(MouseButtonEvent mbe, MouseButton mb);
-
 		/**
 		 * On touchpad scroll event.
 		 *
 		 * @param ticks the ticks
 		 */
-		public void onTouchpadScrollEvent(int ticks);
+		public void onScrollEvent(int ticks);
 
 	}
 	
