@@ -8,6 +8,7 @@ import com.cfms.android.mousedroid.BTProtocol.MouseButtonEvent;
 import com.cfms.android.mousedroid.R;
 import com.cfms.android.mousedroid.activity.TrackpadActivity;
 import com.cfms.android.mousedroid.activity.TrackpadFragment;
+import com.cfms.android.mousedroid.view.ScrollSlider;
 import com.cfms.android.mousedroid.view.Touchpad;
 
 public class TrackpadActivityTest extends
@@ -77,7 +78,7 @@ public class TrackpadActivityTest extends
 				});
 
 		TouchUtils.clickView(this,
-				mTrackpadFragment.getView().findViewById(R.id.trackpadButton1));
+				mTrackpadFragment.getView().findViewById(R.id.trackpad_button1));
 		getInstrumentation().waitForIdleSync();
 
 		assertEquals(true, passPress);
@@ -116,7 +117,7 @@ public class TrackpadActivityTest extends
 				});
 
 		TouchUtils.clickView(this,
-				mTrackpadFragment.getView().findViewById(R.id.trackpadButton2));
+				mTrackpadFragment.getView().findViewById(R.id.trackpad_button3));
 		getInstrumentation().waitForIdleSync();
 
 		assertEquals(true, passPress);
@@ -163,4 +164,44 @@ public class TrackpadActivityTest extends
 		assertEquals(true, passMove);
 	}
 
+
+	public void testScrollSlider() {
+		passMove = false;
+
+		mTrackpadFragment
+				.setTrackpadListener(new TrackpadFragment.TrackpadListener() {
+
+					@Override
+					public void onScrollEvent(int ticks) {
+						if(!passMove){
+							assertEquals(20, ticks);
+						}
+						passMove = true;
+					}
+
+					@Override
+					public void onMouseMove(int dx, int dy) {
+						
+					}
+
+					@Override
+					public void onMouseButtonEvent(MouseButtonEvent mbe,
+							MouseButton mb) {
+
+					}
+				});
+		
+		getInstrumentation().setInTouchMode(true);
+		getInstrumentation().waitForIdleSync();
+		ScrollSlider slider = (ScrollSlider) mTrackpadFragment.getView().findViewById(
+				R.id.scroll_slider);
+		
+		slider.selfTest();
+		
+		getInstrumentation().waitForIdleSync();
+
+		assertEquals(true, passMove);
+	}
+
+	
 }
