@@ -20,6 +20,7 @@ import javax.swing.JProgressBar;
 import javax.swing.border.EmptyBorder;
 
 import com.cfms.android.mousedroid.BTProtocol;
+import com.cfms.android.mousedroid.BTProtocol.KeyEventType;
 import com.cfms.android.mousedroid.BTProtocol.MouseButton;
 import com.cfms.android.mousedroid.BTProtocol.MouseButtonEvent;
 import com.cfms.android.mousedroid.BTProtocol.PacketID;
@@ -203,6 +204,29 @@ public class MainWindow extends JFrame implements BTEventListener {
 		case MOUSE_BUTTON_EVENT:
 			mouseButtonEvent(commandBuffer[2], commandBuffer[3]);
 			break;
+		case KEY_EVENT:
+			bb = ByteBuffer.allocate(4);
+			bb.order(ByteOrder.LITTLE_ENDIAN);
+			bb.put(commandBuffer, 3, 4);
+			int keyCode = bb.getInt(0);
+			keyEvent(keyCode, KeyEventType.get(commandBuffer[2]));
+			break;
+		}
+	}
+
+	private void keyEvent(int keyCode, KeyEventType keyEventType) {
+		try{
+			switch(keyEventType){
+			case PRESS:
+				mRobot.keyPress(keyCode);
+				break;
+			case RELEASE:
+				mRobot.keyRelease(keyCode);
+				break;
+			}
+		}catch(IllegalArgumentException ex)
+		{
+			ex.printStackTrace();
 		}
 	}
 
