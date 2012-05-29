@@ -1,7 +1,10 @@
 package com.cfms.android.mousedroid.test;
 
+import android.os.SystemClock;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.TouchUtils;
+import android.view.MotionEvent;
+import android.view.View;
 
 import com.cfms.android.mousedroid.BTProtocol.KeyEventType;
 import com.cfms.android.mousedroid.KeyCode;
@@ -543,4 +546,57 @@ public class NumpadActivityTest extends
 		assertEquals(true, passPress);
 		assertEquals(true, passRelease);
 	}
+	
+	public void testKeyLiftOutsideBug() {
+		passPress = false;
+		passRelease = false;
+
+		mNumpadFragment.setKeyEventListener(new KeyButton.KeyEventListener() {
+			
+			@Override
+			public void onKeyEvent(int keyCode, KeyEventType type) {
+				assertEquals(KeyCode.VK_NUMPAD9, keyCode);
+				if(keyCode == KeyCode.VK_NUMPAD9)
+				{
+					if(type == KeyEventType.PRESS)
+					{
+						passPress = true;
+					}else if(passPress && type == KeyEventType.RELEASE){
+						passRelease = true;
+					}
+				}
+			}
+		});
+		
+		View keyTarget = mNumpadFragment.getView().findViewById(R.id.numpad_9);
+		View keyOther = mNumpadFragment.getView().findViewById(R.id.numpad_2);
+
+		int[] xy = new int[2];
+		keyTarget.getLocationOnScreen(xy);
+
+		long downTime = SystemClock.uptimeMillis();
+		long eventTime = SystemClock.uptimeMillis();
+		MotionEvent event = MotionEvent.obtain(downTime, eventTime,
+				MotionEvent.ACTION_DOWN , xy[0] + 1, xy[1] + 1, 0);
+		
+		//Press
+		assertTrue(mActivity.dispatchTouchEvent(event));
+		
+		int[] xy2 = new int[2];
+		keyOther.getLocationOnScreen(xy);
+		downTime = SystemClock.uptimeMillis();
+		eventTime = SystemClock.uptimeMillis();
+		event = MotionEvent.obtain(downTime, eventTime,
+				MotionEvent.ACTION_UP, xy2[0] + 1, xy2[1] + 1, 0);
+
+		//release
+		assertTrue(mActivity.dispatchTouchEvent(event));
+		
+		
+		assertEquals(true, passPress);
+		assertEquals(true, passRelease);
+	}
+	
+
+
 }
