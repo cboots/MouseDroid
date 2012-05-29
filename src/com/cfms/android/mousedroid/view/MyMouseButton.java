@@ -11,21 +11,18 @@ import com.cfms.android.mousedroid.BTProtocol.MouseButtonEvent;
 public class MyMouseButton extends Button {
 
 	private MouseButtonEventListener mListener;
-	private MouseButton mButton;
+	private MouseButton mButton = MouseButton.BUTTON1;
 
 	public MyMouseButton(Context context) {
 		super(context);
-		mButton = MouseButton.BUTTON1;
 	}
 
 	public MyMouseButton(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		mButton = MouseButton.BUTTON1;
 	}
 
 	public MyMouseButton(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
-		mButton = MouseButton.BUTTON1;
 	}
 
 	public void setMouseButton(MouseButton button) {
