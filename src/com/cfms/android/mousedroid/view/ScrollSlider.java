@@ -76,7 +76,6 @@ public class ScrollSlider extends View {
 	
 	
 	
-	/** The dragging. */
 	boolean dragging = false;
 	
 	/** The last x. */

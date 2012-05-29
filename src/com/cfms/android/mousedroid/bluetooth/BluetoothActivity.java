@@ -15,7 +15,7 @@ import android.os.Message;
 import android.widget.Toast;
 
 import com.cfms.android.mousedroid.R;
-import com.cfms.android.mousedroid.activity.BaseActivity;
+import com.cfms.android.mousedroid.activity.MultiTouchActivity;
 import com.cfms.android.mousedroid.bluetooth.BluetoothService.BluetoothBinder;
 import com.cfms.android.mousedroid.utils.DebugLog;
 
@@ -23,7 +23,7 @@ import com.cfms.android.mousedroid.utils.DebugLog;
 /**
  * The Class BluetoothActivity.
  */
-public class BluetoothActivity extends BaseActivity {
+public class BluetoothActivity extends MultiTouchActivity {
 
 	/** The Constant TAG. */
 	private static final String TAG = "BluetoothActivity";

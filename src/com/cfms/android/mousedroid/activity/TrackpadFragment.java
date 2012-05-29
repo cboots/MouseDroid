@@ -3,14 +3,13 @@ package com.cfms.android.mousedroid.activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.cfms.android.mousedroid.BTProtocol.MouseButton;
 import com.cfms.android.mousedroid.BTProtocol.MouseButtonEvent;
 import com.cfms.android.mousedroid.R;
+import com.cfms.android.mousedroid.view.MyMouseButton;
 import com.cfms.android.mousedroid.view.ScrollSlider;
 import com.cfms.android.mousedroid.view.ScrollSlider.ScrollListener;
 import com.cfms.android.mousedroid.view.Touchpad;
@@ -28,30 +27,40 @@ public class TrackpadFragment extends Fragment implements TouchpadListener, Scro
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		MultiTouchActivity activity = (MultiTouchActivity) getActivity();
 		View v = inflater.inflate(R.layout.trackpad_fragment, container, false);
-		Button button1 = (Button) v.findViewById(R.id.trackpad_button1);
-		Button button3 = (Button) v.findViewById(R.id.trackpad_button3);
+		MyMouseButton button1 = (MyMouseButton) v.findViewById(R.id.trackpad_button1);
+		MyMouseButton button3 = (MyMouseButton) v.findViewById(R.id.trackpad_button3);
 		Touchpad touchpad = (Touchpad) v.findViewById(R.id.touchpad);
-		touchpad.setTouchpadListener(this);
 		ScrollSlider slider = (ScrollSlider) v.findViewById(R.id.scroll_slider);
-		slider.setScrollListener(this);
 		
-		button1.setOnTouchListener(new View.OnTouchListener() {
-
+		touchpad.setTouchpadListener(this);
+		touchpad.setOnTouchListener(activity);
+		
+		slider.setScrollListener(this);
+		slider.setOnTouchListener(activity);
+		activity.addMoveOutsideEnabledViews(slider);
+		
+		button1.setOnTouchListener(activity);
+		button1.setMouseButton(MouseButton.BUTTON1);
+		button1.setOnMouseButtonEventListener(new MyMouseButton.MouseButtonEventListener() {
+			
 			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				return onButton1Touch(v, event);
+			public void onMouseButtonEvent(MouseButtonEvent mbe, MouseButton mb) {
+				onTouchpadMouseButtonEvent(mbe, mb);
 			}
 		});
-
-		button3.setOnTouchListener(new View.OnTouchListener() {
-
+		
+		button3.setOnTouchListener(activity);
+		button3.setMouseButton(MouseButton.BUTTON3);
+		button3.setOnMouseButtonEventListener(new MyMouseButton.MouseButtonEventListener() {
+			
 			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				return onButton3Touch(v, event);
+			public void onMouseButtonEvent(MouseButtonEvent mbe, MouseButton mb) {
+				onTouchpadMouseButtonEvent(mbe, mb);
 			}
 		});
-
+		
 		return v;
 	}
 
@@ -65,46 +74,6 @@ public class TrackpadFragment extends Fragment implements TouchpadListener, Scro
 		super.onPause();
 	}
 
-	public boolean onButton1Touch(View yourButton, MotionEvent theMotion) {
-		switch (theMotion.getAction()) {
-		case MotionEvent.ACTION_DOWN:
-		case MotionEvent.ACTION_POINTER_DOWN:
-			if (mListener != null) {
-				mListener.onMouseButtonEvent(MouseButtonEvent.PRESS,
-						MouseButton.BUTTON1);
-			}
-
-			break;
-		case MotionEvent.ACTION_UP:
-		case MotionEvent.ACTION_POINTER_UP:
-			if (mListener != null) {
-				mListener.onMouseButtonEvent(MouseButtonEvent.RELEASE,
-						MouseButton.BUTTON1);
-			}
-			break;
-		}
-		return true;
-	}
-
-	public boolean onButton3Touch(View yourButton, MotionEvent theMotion) {
-		switch (theMotion.getAction()) {
-		case MotionEvent.ACTION_DOWN:
-		case MotionEvent.ACTION_POINTER_DOWN:
-			if (mListener != null) {
-				mListener.onMouseButtonEvent(MouseButtonEvent.PRESS,
-						MouseButton.BUTTON3);
-			}
-			break;
-		case MotionEvent.ACTION_UP:
-		case MotionEvent.ACTION_POINTER_UP:
-			if (mListener != null) {
-				mListener.onMouseButtonEvent(MouseButtonEvent.RELEASE,
-						MouseButton.BUTTON3);
-			}
-			break;
-		}
-		return true;
-	}
 
 	public void setTrackpadListener(TrackpadListener listener) {
 		mListener = listener;

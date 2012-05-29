@@ -85,5 +85,6 @@ public abstract class BaseActivity extends FragmentActivity {
 		DebugLog.D(getTag(), "---OnDestroy---");
 		super.onDestroy();
 	}
+	
 
 }

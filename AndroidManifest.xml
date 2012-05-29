@@ -43,6 +43,8 @@
         </activity>
         <activity android:name=".activity.DeviceListActivity" >
         </activity>
+        <activity android:name="com.cfms.android.mousedroid.activity.MultiTouchActivity" >
+        </activity>
         <activity android:name="com.cfms.android.mousedroid.bluetooth.BluetoothActivity" >
         </activity>
 
