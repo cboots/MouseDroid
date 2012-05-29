@@ -11,6 +11,7 @@ import com.cfms.android.mousedroid.KeyCode;
 public class KeyButton extends Button {
 
 	int mKeyCode = KeyCode.VK_SPACE;
+	boolean mPressed = false;
 	private KeyEventListener mListener;
 	
 
@@ -32,18 +33,22 @@ public class KeyButton extends Button {
 		mKeyCode = keyCode;
 	}
 
+	
 	@Override
 	public boolean onTouchEvent(final MotionEvent event) {
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
 		case MotionEvent.ACTION_POINTER_DOWN:
 			if (mListener != null) {
+				mPressed = true;
 				mListener.onKeyEvent(mKeyCode, KeyEventType.PRESS);
 			}
 			return true;
 		case MotionEvent.ACTION_UP:
 		case MotionEvent.ACTION_POINTER_UP:
-			if (mListener != null) {
+		case MotionEvent.ACTION_CANCEL:
+			if (mListener != null && mPressed) {
+				mPressed = false;
 				mListener.onKeyEvent(mKeyCode, KeyEventType.RELEASE);
 			}
 			return true;

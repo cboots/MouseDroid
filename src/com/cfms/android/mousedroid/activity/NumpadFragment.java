@@ -61,6 +61,7 @@ public class NumpadFragment extends Fragment implements KeyEventListener {
 		button.setKeyCode(keyCode);
 		button.setOnTouchListener(activity);
 		button.setOnKeyEventListener(this);
+		activity.addMoveOutsideEnabledViews(button);
 	}
 
 	@Override
