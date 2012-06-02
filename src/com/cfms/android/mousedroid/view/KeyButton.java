@@ -1,6 +1,7 @@
 package com.cfms.android.mousedroid.view;
 
 import android.content.Context;
+import android.os.Vibrator;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.Button;
@@ -13,6 +14,7 @@ public class KeyButton extends Button {
 	int mKeyCode = KeyCode.VK_SPACE;
 	boolean mPressed = false;
 	private KeyEventListener mListener;
+	private boolean mVibrate;
 	
 
 	public KeyButton(Context context) {
@@ -33,12 +35,18 @@ public class KeyButton extends Button {
 		mKeyCode = keyCode;
 	}
 
+	public void setEnableVibrate(boolean vibrate)
+	{
+		mVibrate = vibrate;
+	}
+	
 	
 	@Override
 	public boolean onTouchEvent(final MotionEvent event) {
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
 		case MotionEvent.ACTION_POINTER_DOWN:
+			forceFeedback();
 			if (mListener != null) {
 				mPressed = true;
 				mListener.onKeyEvent(mKeyCode, KeyEventType.PRESS);
@@ -63,6 +71,18 @@ public class KeyButton extends Button {
 	public interface KeyEventListener {
 
 		public void onKeyEvent(int keyCode, KeyEventType type);
+
+	}
+
+	private void forceFeedback()
+	{
+		if(mVibrate){
+			// Get instance of Vibrator from current Context
+			Vibrator v = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+			 
+			// Vibrate for 50 milliseconds
+			v.vibrate(50);
+		}
 
 	}
 	

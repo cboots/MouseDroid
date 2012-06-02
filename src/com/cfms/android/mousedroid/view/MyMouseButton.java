@@ -1,6 +1,7 @@
 package com.cfms.android.mousedroid.view;
 
 import android.content.Context;
+import android.os.Vibrator;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.widget.Button;
@@ -12,6 +13,7 @@ public class MyMouseButton extends Button {
 
 	private MouseButtonEventListener mListener;
 	private MouseButton mButton = MouseButton.BUTTON1;
+	private boolean mVibrate;
 
 	public MyMouseButton(Context context) {
 		super(context);
@@ -29,11 +31,18 @@ public class MyMouseButton extends Button {
 		mButton = button;
 	}
 
+
+	public void setEnableVibrate(boolean vibrate)
+	{
+		mVibrate = vibrate;
+	}
+	
 	@Override
 	public boolean onTouchEvent(final MotionEvent event) {
 		switch (event.getAction()) {
 		case MotionEvent.ACTION_DOWN:
 		case MotionEvent.ACTION_POINTER_DOWN:
+			forceFeedback();
 			if (mListener != null) {
 				mListener.onMouseButtonEvent(MouseButtonEvent.PRESS, mButton);
 			}
@@ -55,6 +64,18 @@ public class MyMouseButton extends Button {
 	public interface MouseButtonEventListener {
 
 		public void onMouseButtonEvent(MouseButtonEvent mbe, MouseButton mb);
+
+	}
+
+	private void forceFeedback()
+	{
+		if(mVibrate){
+			// Get instance of Vibrator from current Context
+			Vibrator v = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
+			 
+			// Vibrate for 50 milliseconds
+			v.vibrate(50);
+		}
 
 	}
 }

@@ -28,6 +28,9 @@ public class TrackpadFragment extends Fragment implements TouchpadListener, Scro
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		MultiTouchActivity activity = (MultiTouchActivity) getActivity();
+
+		boolean vibrate = PreferencesActivity.getBoolean(activity, PreferencesActivity.PREF_KEY_VIBRATE);
+		
 		View v = inflater.inflate(R.layout.trackpad_fragment, container, false);
 		MyMouseButton button1 = (MyMouseButton) v.findViewById(R.id.trackpad_button1);
 		MyMouseButton button3 = (MyMouseButton) v.findViewById(R.id.trackpad_button3);
@@ -43,6 +46,7 @@ public class TrackpadFragment extends Fragment implements TouchpadListener, Scro
 		
 		button1.setOnTouchListener(activity);
 		button1.setMouseButton(MouseButton.BUTTON1);
+		button1.setEnableVibrate(vibrate);
 		button1.setOnMouseButtonEventListener(new MyMouseButton.MouseButtonEventListener() {
 			
 			@Override
@@ -53,6 +57,7 @@ public class TrackpadFragment extends Fragment implements TouchpadListener, Scro
 		
 		button3.setOnTouchListener(activity);
 		button3.setMouseButton(MouseButton.BUTTON3);
+		button3.setEnableVibrate(vibrate);
 		button3.setOnMouseButtonEventListener(new MyMouseButton.MouseButtonEventListener() {
 			
 			@Override

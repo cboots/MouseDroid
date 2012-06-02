@@ -12,5 +12,6 @@
     <!-- Actual values -->
     <bool name="flurry_enabled">true</bool>
     <bool name="flurry_location_enabled">false</bool>
+    <bool name="key_vibrate">true</bool>
     <integer name="theme">0</integer>
 </resources>

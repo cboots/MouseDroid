@@ -57,10 +57,12 @@ public class NumpadFragment extends Fragment implements KeyEventListener {
 	}
 	
 	private void setupKey(MultiTouchActivity activity, View root, int viewId, int keyCode){
+		boolean vibrate = PreferencesActivity.getBoolean(activity, PreferencesActivity.PREF_KEY_VIBRATE);
 		KeyButton button = (KeyButton) root.findViewById(viewId);
 		button.setKeyCode(keyCode);
 		button.setOnTouchListener(activity);
 		button.setOnKeyEventListener(this);
+		button.setEnableVibrate(vibrate);
 		activity.addMoveOutsideEnabledViews(button);
 	}
 
