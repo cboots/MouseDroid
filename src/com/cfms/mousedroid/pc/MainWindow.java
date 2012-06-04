@@ -24,6 +24,7 @@ import com.cfms.android.mousedroid.BTProtocol.KeyEventType;
 import com.cfms.android.mousedroid.BTProtocol.MouseButton;
 import com.cfms.android.mousedroid.BTProtocol.MouseButtonEvent;
 import com.cfms.android.mousedroid.BTProtocol.PacketID;
+import com.cfms.android.mousedroid.KeyCode;
 import com.cfms.mousedroid.pc.bluetooth.BluetoothServer;
 import com.cfms.mousedroid.pc.bluetooth.BluetoothServer.BTEventListener;
 
@@ -218,15 +219,51 @@ public class MainWindow extends JFrame implements BTEventListener {
 		try{
 			switch(keyEventType){
 			case PRESS:
-				mRobot.keyPress(keyCode);
+				keyPress(keyCode);
 				break;
 			case RELEASE:
-				mRobot.keyRelease(keyCode);
+				keyRelease(keyCode);
 				break;
 			}
 		}catch(IllegalArgumentException ex)
 		{
 			ex.printStackTrace();
+		}
+	}
+
+	private void keyRelease(int keyCode) {
+		switch(keyCode)
+		{
+		case KeyCode.VK_ASTERISK:
+			mRobot.keyRelease(KeyCode.VK_8);
+			break;
+		case KeyCode.VK_PLUS:
+			mRobot.keyRelease(KeyCode.VK_EQUALS);
+			break;
+		default:
+			mRobot.keyRelease(keyCode);
+			break;
+			
+		}
+	}
+
+	private void keyPress(int keyCode) {
+		switch(keyCode)
+		{
+		case KeyCode.VK_ASTERISK:
+			mRobot.keyPress(KeyCode.VK_SHIFT);
+			mRobot.keyPress(KeyCode.VK_8);
+			mRobot.keyRelease(KeyCode.VK_SHIFT);
+			break;
+		case KeyCode.VK_PLUS:
+			mRobot.keyPress(KeyCode.VK_SHIFT);
+			mRobot.keyPress(KeyCode.VK_EQUALS);
+			mRobot.keyRelease(KeyCode.VK_SHIFT);
+			break;
+		default:
+			mRobot.keyPress(keyCode);
+			break;
+			
 		}
 	}
 
