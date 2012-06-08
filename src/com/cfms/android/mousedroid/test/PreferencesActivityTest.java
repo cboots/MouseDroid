@@ -94,4 +94,6 @@ public class PreferencesActivityTest extends
     	PreferencesActivity.GetEditor(mActivity).putInt("test_change_int", 20).commit();
     	assertEquals(20, PreferencesActivity.getInteger(mActivity, "test_change_int"));
     }
+    
+    
 }
