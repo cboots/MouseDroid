@@ -6,6 +6,8 @@ package com.cfms.android.mousedroid.bluetooth;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.UUID;
 
 import android.app.Notification;
@@ -27,6 +29,7 @@ import com.cfms.android.mousedroid.BTProtocol;
 import com.cfms.android.mousedroid.BTProtocol.PacketID;
 import com.cfms.android.mousedroid.R;
 import com.cfms.android.mousedroid.activity.MouseDroidActivity;
+import com.cfms.android.mousedroid.activity.PreferencesActivity;
 import com.cfms.android.mousedroid.utils.DebugLog;
 
 // TODO: Auto-generated Javadoc
@@ -100,10 +103,11 @@ public class BluetoothService extends Service {
 	private static final UUID MY_UUID_SECURE = UUID
 			.fromString("6201c3fc-22cc-4a55-8fc2-4f4342ad97e0");
 
-	/** The Constant MY_UUID_INSECURE. */
+//	/** The Constant MY_UUID_INSECURE. */
+//	private static final UUID MY_UUID_INSECURE = UUID
+//			.fromString("fa46ddbb-0694-49f6-993c-1a1621f2e34d");
 	private static final UUID MY_UUID_INSECURE = UUID
-			.fromString("fa46ddbb-0694-49f6-993c-1a1621f2e34d");
-
+			.fromString("00001101-0000-1000-8000-00805F9B34FB");
 	/**
 	 * Class used for the client Binder. Because we know this service always
 	 * runs in the same process as its clients, we don't need to deal with IPC.
@@ -349,7 +353,9 @@ public class BluetoothService extends Service {
 		}
 
 		// Start the thread to connect with the given device
-		mConnectThread = new ConnectThread(device, secure);
+		mConnectThread = new ConnectThread(device, secure,
+				PreferencesActivity.getBoolean(getApplicationContext(),
+						PreferencesActivity.PREF_HTC_BLUETOOTH_COMPATIBILITY));
 		mConnectThread.start();
 		setState(STATE_CONNECTING);
 	}
@@ -425,7 +431,6 @@ public class BluetoothService extends Service {
 		// Perform the write unsynchronized
 		r.write(message, length);
 	}
-	
 
 	protected void onBTMessageRead(byte[] buffer, int length) {
 		if (mHandler != null) {
@@ -461,7 +466,6 @@ public class BluetoothService extends Service {
 		reset();
 	}
 
-
 	/**
 	 * This thread runs while attempting to make an outgoing connection with a
 	 * device. It runs straight through; the connection either succeeds or
@@ -486,8 +490,31 @@ public class BluetoothService extends Service {
 		 * @param secure
 		 *            the secure
 		 */
+		@SuppressWarnings("unused")
 		public ConnectThread(BluetoothDevice device, boolean secure) {
+			this(device, secure, false);
+		}
+		
+		/**
+		 * Instantiates a new connect thread.
+		 * 
+		 * @param device
+		 *            the device
+		 * @param secure
+		 *            the secure
+		 */
+		public ConnectThread(BluetoothDevice device, boolean secure,
+				boolean useHTCCompatibility) {
 			mmDevice = device;
+			if (useHTCCompatibility)
+				mmSocket = createCompatibilitySocket(device);
+			else
+				mmSocket = createSocket(device, secure);
+			
+		}
+
+		private BluetoothSocket createSocket(BluetoothDevice device,
+				boolean secure) {
 			BluetoothSocket tmp = null;
 			mmSocketType = secure ? "Secure" : "Insecure";
 
@@ -498,6 +525,7 @@ public class BluetoothService extends Service {
 					tmp = device
 							.createRfcommSocketToServiceRecord(MY_UUID_SECURE);
 				} else {
+
 					tmp = device
 							.createInsecureRfcommSocketToServiceRecord(MY_UUID_INSECURE);
 				}
@@ -505,7 +533,32 @@ public class BluetoothService extends Service {
 				Log.e(TAG, "Socket Type: " + mmSocketType + "create() failed",
 						e);
 			}
-			mmSocket = tmp;
+			return tmp;
+		}
+
+		private BluetoothSocket createCompatibilitySocket(BluetoothDevice device) {
+			BluetoothSocket tmp = null;
+			// Get a BluetoothSocket for a connection with the
+			// given BluetoothDevice
+			try {
+				BluetoothDevice hxm = BluetoothAdapter.getDefaultAdapter()
+						.getRemoteDevice(device.getAddress());
+				Method m = hxm.getClass().getMethod("createRfcommSocket", new Class[] { int.class });
+				tmp = (BluetoothSocket) m.invoke(device, 1);
+			} catch (NoSuchMethodException e) {
+				Log.e(TAG, "Socket Type: " + mmSocketType + "create() failed",
+						e);
+			} catch (IllegalArgumentException e) {
+				Log.e(TAG, "Socket Type: " + mmSocketType + "create() failed",
+						e);
+			} catch (IllegalAccessException e) {
+				Log.e(TAG, "Socket Type: " + mmSocketType + "create() failed",
+						e);
+			} catch (InvocationTargetException e) {
+				Log.e(TAG, "Socket Type: " + mmSocketType + "create() failed",
+						e);
+			}
+			return tmp;
 		}
 
 		/*

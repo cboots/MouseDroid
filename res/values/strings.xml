@@ -18,5 +18,11 @@
     <string name="select_device">select a device to connect</string>
     <string name="connect">Connect a device</string>
     <string name="discoverable">Make discoverable</string>
+    <string name="htcbluetoothcompat_summaryOff">Enable this if you are having trouble connecting on an HTC phone.</string>
+    <string name="htcbluetoothcompat_summaryOn">Bypasses an internal issue on some HTC devices</string>
+    <string name="htcbluetoothcompat_title">Enable HTC Bluetooth Compatibility</string>
+    <string name="key_vibrate_summaryOff">Buttons will not vibrate when pressed</string>
+    <string name="key_vibrate_summaryOn">Buttons will vibrate when pressed</string>
+    <string name="key_vibrate_title">Enable Button Force Feedback</string>
 
 </resources>

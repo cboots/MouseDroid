@@ -77,5 +77,10 @@ public class Configuration {
 		return debuggable;
 	}
 	
+	
+	public static int getAPILevel()
+	{
+		return Integer.valueOf(android.os.Build.VERSION.SDK_INT);
+	}
 
 }

@@ -21,4 +21,10 @@
         android:layout_height="wrap_content"
         android:onClick="testButton2"
         android:text="numpad" />
+	<Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="testButton3"
+        android:text="settings" />
 </LinearLayout>
