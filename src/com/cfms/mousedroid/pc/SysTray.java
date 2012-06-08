@@ -12,8 +12,12 @@ import java.awt.TrayIcon.MessageType;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.RandomAccessFile;
+import java.nio.channels.FileLock;
 
 import javax.swing.Icon;
+import javax.swing.JOptionPane;
 import javax.swing.plaf.metal.MetalIconFactory;
 
 import com.cfms.mousedroid.pc.bluetooth.BluetoothServer;
@@ -63,6 +67,13 @@ public class SysTray {
 	}
 
 	public static void main(String[] args) throws Exception {
+		if(!lockInstance("Lockfile"))
+		{
+			//lock failed
+			JOptionPane.showMessageDialog(null, "Only 1 instance of this application can run at one time");
+			return;
+		}
+		
 		sCmdProcessor = new CommandProcessor();
 
 		sCmdProcessor
@@ -112,7 +123,7 @@ public class SysTray {
 
 		SystemTray.getSystemTray().add(sTrayIcon);
 
-		//sCmdProcessor.startListening();
+		sCmdProcessor.startListening();
 	}
 
 	private static void launchMainWindow() {
@@ -127,6 +138,37 @@ public class SysTray {
 				}
 			}
 		});
+	}
+	
+	/**
+	 * @param lockFile
+	 * @return True if lock acquired, false if already locked.
+	 */
+	private static boolean lockInstance(final String lockFile) {
+	    try {
+	        final File file = new File(lockFile);
+	        final RandomAccessFile randomAccessFile = new RandomAccessFile(file, "rw");
+	        final FileLock fileLock = randomAccessFile.getChannel().tryLock();
+	        if (fileLock != null) {
+	            Runtime.getRuntime().addShutdownHook(new Thread() {
+	                public void run() {
+	                    try {
+	                        fileLock.release();
+	                        randomAccessFile.close();
+	                        file.delete();
+	                    } catch (Exception e) {
+	            	        MyLog.log("Unable to remove lock file: " + lockFile);
+	            	        e.printStackTrace();
+	                    }
+	                }
+	            });
+	            return true;
+	        }
+	    } catch (Exception e) {
+	        MyLog.log("Unable to create and/or lock file: " + lockFile);
+	        e.printStackTrace();
+	    }
+	    return false;
 	}
 
 }
