@@ -27,13 +27,14 @@ public class BluetoothServer {
 
 	// Server string must not have any dashes in the ID.
 	/** The Constant uuidStr. */
-	//private static final String uuidStrInsecure = "fa46ddbb069449f6993c1a1621f2e34d";// fa46ddbb-0694-49f6-993c-1a1621f2e34d
+	// private static final String uuidStrInsecure =
+	// "fa46ddbb069449f6993c1a1621f2e34d";//
+	// fa46ddbb-0694-49f6-993c-1a1621f2e34d
 	private static final String uuidStrInsecure = "0000110100001000800000805F9B34FB";// 00001101-0000-1000-8000-00805F9B34FB
 
 	/** The Constant uuidStr. */
 	private static final String uuidStrSecure = "6201c3fc22cc4a558fc24f4342ad97e0";// 6201c3fc-22cc-4a55-8fc2-4f4342ad97e0
 
-	
 	/** The Constant STATE_NONE. */
 	public static final int STATE_NONE = 0;
 
@@ -156,6 +157,12 @@ public class BluetoothServer {
 		}
 
 		if (mConnectedThread != null) {
+			if (mState == STATE_CONNECTED)
+			{
+				byte[] cmd = BTProtocol.getDisconnectPacket();
+				write(cmd, cmd.length);
+			}
+
 			mConnectedThread.cancel();
 			mConnectedThread = null;
 		}
@@ -310,7 +317,7 @@ public class BluetoothServer {
 	}
 
 	public void disconnect() {
-		if(getState() == STATE_CONNECTED){
+		if (getState() == STATE_CONNECTED) {
 			byte[] cmd = BTProtocol.getDisconnectPacket();
 			write(cmd, cmd.length);
 		}

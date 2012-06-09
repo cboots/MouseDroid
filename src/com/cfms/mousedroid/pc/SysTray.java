@@ -70,7 +70,7 @@ public class SysTray {
 		if(!lockInstance("Lockfile"))
 		{
 			//lock failed
-			JOptionPane.showMessageDialog(null, "Only 1 instance of this application can run at one time");
+			JOptionPane.showMessageDialog(null, "Only one instance of this application can run at one time");
 			return;
 		}
 		
@@ -112,9 +112,10 @@ public class SysTray {
 					}
 				});
 
-		sTrayIcon = new TrayIcon(getImage(), "This is a Java Tray Icon",
+		sTrayIcon = new TrayIcon(getImage(), "Mouse Droid",
 				createPopupMenu());
 
+	
 		sTrayIcon.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				launchMainWindow();
