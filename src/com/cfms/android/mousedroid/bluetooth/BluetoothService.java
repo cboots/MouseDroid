@@ -98,16 +98,13 @@ public class BluetoothService extends Service {
 	/** The Constant ERRORCODE_CONNECTION_LOST. */
 	public static final int ERRORCODE_CONNECTION_LOST = 2;
 
-	// Unique UUID for this application
-	/** The Constant MY_UUID_SECURE. */
-	private static final UUID MY_UUID_SECURE = UUID
-			.fromString("6201c3fc-22cc-4a55-8fc2-4f4342ad97e0");
 
-//	/** The Constant MY_UUID_INSECURE. */
-//	private static final UUID MY_UUID_INSECURE = UUID
-//			.fromString("fa46ddbb-0694-49f6-993c-1a1621f2e34d");
-	private static final UUID MY_UUID_INSECURE = UUID
+	// /** The Constant MY_UUID_INSECURE. */
+	// private static final UUID MY_UUID_INSECURE = UUID
+	// .fromString("fa46ddbb-0694-49f6-993c-1a1621f2e34d");
+	private static final UUID SPP_UUID = UUID
 			.fromString("00001101-0000-1000-8000-00805F9B34FB");
+
 	/**
 	 * Class used for the client Binder. Because we know this service always
 	 * runs in the same process as its clients, we don't need to deal with IPC.
@@ -321,16 +318,6 @@ public class BluetoothService extends Service {
 	}
 
 	/**
-	 * Connect.
-	 * 
-	 * @param device
-	 *            the device
-	 */
-	public synchronized void connect(BluetoothDevice device) {
-		connect(device, false);
-	}
-
-	/**
 	 * Start the ConnectThread to initiate a connection to a remote device.
 	 * 
 	 * @param device
@@ -338,7 +325,7 @@ public class BluetoothService extends Service {
 	 * @param secure
 	 *            Socket Security type - Secure (true) , Insecure (false)
 	 */
-	public synchronized void connect(BluetoothDevice device, boolean secure) {
+	public synchronized void connect(BluetoothDevice device) {
 		DebugLog.D(TAG, "connect to: " + device);
 
 		// Cancel any current processes and kill any current connections
@@ -353,8 +340,7 @@ public class BluetoothService extends Service {
 		}
 
 		// Start the thread to connect with the given device
-		mConnectThread = new ConnectThread(device, secure,
-				PreferencesActivity.getBoolean(getApplicationContext(),
+		mConnectThread = new ConnectThread(device, 	PreferencesActivity.getBoolean(getApplicationContext(),
 						PreferencesActivity.PREF_HTC_BLUETOOTH_COMPATIBILITY));
 		mConnectThread.start();
 		setState(STATE_CONNECTING);
@@ -367,12 +353,10 @@ public class BluetoothService extends Service {
 	 *            The BluetoothSocket on which the connection was made
 	 * @param device
 	 *            The BluetoothDevice that has been connected
-	 * @param socketType
-	 *            the socket type
 	 */
 	public synchronized void connected(BluetoothSocket socket,
-			BluetoothDevice device, final String socketType) {
-		DebugLog.D(TAG, "connected, Socket Type:" + socketType);
+			BluetoothDevice device) {
+		DebugLog.D(TAG, "socket connected");
 
 		// Cancel the thread that completed the connection
 		if (mConnectThread != null) {
@@ -387,7 +371,7 @@ public class BluetoothService extends Service {
 		}
 
 		// Start the thread to manage the connection and perform transmissions
-		mConnectedThread = new ConnectedThread(socket, socketType);
+		mConnectedThread = new ConnectedThread(socket);
 		mConnectedThread.start();
 
 		setState(STATE_CONNECTED);
@@ -491,10 +475,10 @@ public class BluetoothService extends Service {
 		 *            the secure
 		 */
 		@SuppressWarnings("unused")
-		public ConnectThread(BluetoothDevice device, boolean secure) {
-			this(device, secure, false);
+		public ConnectThread(BluetoothDevice device) {
+			this(device, false);
 		}
-		
+
 		/**
 		 * Instantiates a new connect thread.
 		 * 
@@ -503,35 +487,26 @@ public class BluetoothService extends Service {
 		 * @param secure
 		 *            the secure
 		 */
-		public ConnectThread(BluetoothDevice device, boolean secure,
-				boolean useHTCCompatibility) {
+		public ConnectThread(BluetoothDevice device, boolean useHTCCompatibility) {
 			mmDevice = device;
 			if (useHTCCompatibility)
 				mmSocket = createCompatibilitySocket(device);
 			else
-				mmSocket = createSocket(device, secure);
-			
+				mmSocket = createSocket(device);
+
 		}
 
-		private BluetoothSocket createSocket(BluetoothDevice device,
-				boolean secure) {
+		private BluetoothSocket createSocket(BluetoothDevice device) {
 			BluetoothSocket tmp = null;
-			mmSocketType = secure ? "Secure" : "Insecure";
 
 			// Get a BluetoothSocket for a connection with the
 			// given BluetoothDevice
 			try {
-				if (secure) {
-					tmp = device
-							.createRfcommSocketToServiceRecord(MY_UUID_SECURE);
-				} else {
+				tmp = device
+						.createInsecureRfcommSocketToServiceRecord(SPP_UUID);
 
-					tmp = device
-							.createInsecureRfcommSocketToServiceRecord(MY_UUID_INSECURE);
-				}
 			} catch (IOException e) {
-				Log.e(TAG, "Socket Type: " + mmSocketType + "create() failed",
-						e);
+				Log.e(TAG, "Socket create() failed", e);
 			}
 			return tmp;
 		}
@@ -543,7 +518,8 @@ public class BluetoothService extends Service {
 			try {
 				BluetoothDevice hxm = BluetoothAdapter.getDefaultAdapter()
 						.getRemoteDevice(device.getAddress());
-				Method m = hxm.getClass().getMethod("createRfcommSocket", new Class[] { int.class });
+				Method m = hxm.getClass().getMethod("createRfcommSocket",
+						new Class[] { int.class });
 				tmp = (BluetoothSocket) m.invoke(device, 1);
 			} catch (NoSuchMethodException e) {
 				Log.e(TAG, "Socket Type: " + mmSocketType + "create() failed",
@@ -597,7 +573,7 @@ public class BluetoothService extends Service {
 			}
 
 			// Start the connected thread
-			connected(mmSocket, mmDevice, mmSocketType);
+			connected(mmSocket, mmDevice);
 		}
 
 		/**
@@ -636,11 +612,9 @@ public class BluetoothService extends Service {
 		 * 
 		 * @param socket
 		 *            the socket
-		 * @param socketType
-		 *            the socket type
 		 */
-		public ConnectedThread(BluetoothSocket socket, String socketType) {
-			DebugLog.D(TAG, "create ConnectedThread: " + socketType);
+		public ConnectedThread(BluetoothSocket socket) {
+			DebugLog.D(TAG, "create ConnectedThread");
 			mmSocket = socket;
 			InputStream tmpIn = null;
 			OutputStream tmpOut = null;
