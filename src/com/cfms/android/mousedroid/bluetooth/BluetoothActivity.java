@@ -29,6 +29,7 @@ import com.cfms.android.mousedroid.utils.DebugLog;
 public class BluetoothActivity extends MultiTouchActivity {
 
 	
+	/** The Version code. */
 	protected int VersionCode = -1;
 	
 	/** The Constant TAG. */
@@ -260,7 +261,8 @@ public class BluetoothActivity extends MultiTouchActivity {
 
 	
 	// The Handler that gets information back from the BluetoothChatService
-    private final Handler mHandler = new Handler() {
+    /** The m handler. */
+	private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -285,7 +287,10 @@ public class BluetoothActivity extends MultiTouchActivity {
         }
     };
 
+    /** The command buffer. */
     byte[] commandBuffer = new byte[128];
+	
+	/** The command length. */
 	int commandLength = 0;
 	
 	/**
@@ -322,6 +327,13 @@ public class BluetoothActivity extends MultiTouchActivity {
 	}
 
 
+	/**
+	 * Checks if is full command.
+	 *
+	 * @param commandBuffer the command buffer
+	 * @param len the len
+	 * @return true, if is full command
+	 */
 	public boolean isFullCommand(byte[] commandBuffer, int len) {
 		if(len >= 4){
 			if(commandBuffer[len - 1] == BTProtocol.LF
@@ -332,6 +344,12 @@ public class BluetoothActivity extends MultiTouchActivity {
 		return false;
 	}
 
+	/**
+	 * Execute command.
+	 *
+	 * @param commandBuffer the command buffer
+	 * @param len the len
+	 */
 	public void executeCommand(byte[] commandBuffer, int len) {
 		PacketID ID = PacketID.get(commandBuffer[1]);
 		if(ID == null)
@@ -350,6 +368,9 @@ public class BluetoothActivity extends MultiTouchActivity {
 		}
 	}
 
+	/**
+	 * Send version.
+	 */
 	private void sendVersion() {
 		byte msb = (byte) (VersionCode >> 8);
 		byte lsb = (byte) (VersionCode);
@@ -372,8 +393,10 @@ public class BluetoothActivity extends MultiTouchActivity {
 	
 	/**
 	 * Called when the BluetoothService state changes
-	 * Override this method to handle this event
-	 * @param arg2 
+	 * Override this method to handle this event.
+	 *
+	 * @param oldState the old state
+	 * @param newState the new state
 	 */
 	public void onBTStateChanged(int oldState, int newState){
 		//Do nothing, event handler
@@ -382,7 +405,7 @@ public class BluetoothActivity extends MultiTouchActivity {
 	
 	/**
 	 * On BluetoothService Error
-	 * Override this method to handle this event
+	 * Override this method to handle this event.
 	 *
 	 * @param errorCode the error code
 	 */

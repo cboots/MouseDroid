@@ -41,6 +41,7 @@ public class BluetoothService extends Service {
 	/** The Constant TAG. */
 	private final static String TAG = "BluetoothService";
 
+	/** The D. */
 	private final boolean D = true;
 
 	// Binder given to clients
@@ -102,6 +103,7 @@ public class BluetoothService extends Service {
 	// /** The Constant MY_UUID_INSECURE. */
 	// private static final UUID MY_UUID_INSECURE = UUID
 	// .fromString("fa46ddbb-0694-49f6-993c-1a1621f2e34d");
+	/** The Constant SPP_UUID. */
 	private static final UUID SPP_UUID = UUID
 			.fromString("00001101-0000-1000-8000-00805F9B34FB");
 
@@ -319,11 +321,8 @@ public class BluetoothService extends Service {
 
 	/**
 	 * Start the ConnectThread to initiate a connection to a remote device.
-	 * 
-	 * @param device
-	 *            The BluetoothDevice to connect
-	 * @param secure
-	 *            Socket Security type - Secure (true) , Insecure (false)
+	 *
+	 * @param device The BluetoothDevice to connect
 	 */
 	public synchronized void connect(BluetoothDevice device) {
 		DebugLog.D(TAG, "connect to: " + device);
@@ -416,6 +415,12 @@ public class BluetoothService extends Service {
 		r.write(message, length);
 	}
 
+	/**
+	 * On bt message read.
+	 *
+	 * @param buffer the buffer
+	 * @param length the length
+	 */
 	protected void onBTMessageRead(byte[] buffer, int length) {
 		if (mHandler != null) {
 			mHandler.obtainMessage(BluetoothService.MESSAGE_READ, length, -1,
@@ -423,6 +428,12 @@ public class BluetoothService extends Service {
 		}
 	}
 
+	/**
+	 * On bt message written.
+	 *
+	 * @param buffer the buffer
+	 * @param length the length
+	 */
 	protected void onBTMessageWritten(byte[] buffer, int length) {
 		if (mHandler != null) {
 			mHandler.obtainMessage(BluetoothService.MESSAGE_WRITE, length, -1,
@@ -468,11 +479,8 @@ public class BluetoothService extends Service {
 
 		/**
 		 * Instantiates a new connect thread.
-		 * 
-		 * @param device
-		 *            the device
-		 * @param secure
-		 *            the secure
+		 *
+		 * @param device the device
 		 */
 		@SuppressWarnings("unused")
 		public ConnectThread(BluetoothDevice device) {
@@ -481,11 +489,9 @@ public class BluetoothService extends Service {
 
 		/**
 		 * Instantiates a new connect thread.
-		 * 
-		 * @param device
-		 *            the device
-		 * @param secure
-		 *            the secure
+		 *
+		 * @param device the device
+		 * @param useHTCCompatibility the use htc compatibility
 		 */
 		public ConnectThread(BluetoothDevice device, boolean useHTCCompatibility) {
 			mmDevice = device;
@@ -493,9 +499,14 @@ public class BluetoothService extends Service {
 				mmSocket = createCompatibilitySocket(device);
 			else
 				mmSocket = createSocket(device);
-
 		}
 
+		/**
+		 * Creates the socket.
+		 *
+		 * @param device the device
+		 * @return the bluetooth socket
+		 */
 		private BluetoothSocket createSocket(BluetoothDevice device) {
 			BluetoothSocket tmp = null;
 
@@ -511,6 +522,12 @@ public class BluetoothService extends Service {
 			return tmp;
 		}
 
+		/**
+		 * Creates the compatibility socket.
+		 *
+		 * @param device the device
+		 * @return the bluetooth socket
+		 */
 		private BluetoothSocket createCompatibilitySocket(BluetoothDevice device) {
 			BluetoothSocket tmp = null;
 			// Get a BluetoothSocket for a connection with the
