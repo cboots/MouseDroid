@@ -8,12 +8,15 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.widget.Toast;
 
+import com.cfms.android.mousedroid.BTProtocol;
+import com.cfms.android.mousedroid.BTProtocol.PacketID;
 import com.cfms.android.mousedroid.R;
 import com.cfms.android.mousedroid.activity.MultiTouchActivity;
 import com.cfms.android.mousedroid.bluetooth.BluetoothService.BluetoothBinder;
@@ -25,6 +28,9 @@ import com.cfms.android.mousedroid.utils.DebugLog;
  */
 public class BluetoothActivity extends MultiTouchActivity {
 
+	
+	protected int VersionCode = -1;
+	
 	/** The Constant TAG. */
 	private static final String TAG = "BluetoothActivity";
 
@@ -68,7 +74,16 @@ public class BluetoothActivity extends MultiTouchActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		DebugLog.D(TAG, "+++onCreate+++");
 		super.onCreate(savedInstanceState);
-
+		try
+		{
+		    VersionCode = this.getPackageManager().getPackageInfo(this.getPackageName(), 0).versionCode;
+		}
+		catch (NameNotFoundException e)
+		{
+		    DebugLog.V(getTag(), e.getMessage());
+		}
+		
+		
 		// Get local Bluetooth adapter
 		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
@@ -270,19 +285,77 @@ public class BluetoothActivity extends MultiTouchActivity {
         }
     };
 
+    byte[] commandBuffer = new byte[128];
+	int commandLength = 0;
 	
 	/**
 	 * Called when a new bluetooth message is received by the BluetoothService
 	 * Override this method to handle this event
-	 * By default the implementation simply releases the buffer back to the factory to prevent memory overloads.
-	 * Any override must release the buffer itself or call super.onBTMessageRead(message, length)
+	 * By default the implementation releases the buffer back to the factory to prevent memory overloads.
+	 * Any override must call super.onBTMessageRead(message, length)
 	 * 
 	 * @param message the message
 	 * @param length the length
 	 */
 	public void onBTMessageRead(byte[] message, int length) {
+		//Parse out additional listeners
+		for(int i = 0; i< length; i++)
+		{
+			commandBuffer[commandLength] = message[i];
+			if(commandLength == 0)
+			{
+				if(message[i] == BTProtocol.PACKET_PREAMBLE){
+					commandLength++;
+				}
+			}else{
+				commandLength++;
+			}
+			
+			if(isFullCommand(commandBuffer, commandLength)){
+				executeCommand(commandBuffer, commandLength);
+				commandLength = 0;
+			}
+		}
+		
 		//Release the buffer
 		ByteBufferFactory.releaseBuffer(message);
+	}
+
+
+	public boolean isFullCommand(byte[] commandBuffer, int len) {
+		if(len >= 4){
+			if(commandBuffer[len - 1] == BTProtocol.LF
+					&& commandBuffer[len - 2] == BTProtocol.CR){
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public void executeCommand(byte[] commandBuffer, int len) {
+		PacketID ID = PacketID.get(commandBuffer[1]);
+		if(ID == null)
+			return;
+		
+		switch(ID)
+		{
+		case DISCONNECT:
+			DebugLog.D(getTag(), "Disconnect Packet");
+			mBtService.disconnect();
+			break;
+		case GET_VERSION:
+			sendVersion();
+			break;
+
+		}
+	}
+
+	private void sendVersion() {
+		byte msb = (byte) (VersionCode >> 8);
+		byte lsb = (byte) (VersionCode);
+		
+		byte[] packet = {BTProtocol.PACKET_PREAMBLE, PacketID.RET_VERSION.getCode(), msb, lsb, BTProtocol.CR, BTProtocol.LF};
+		mBtService.write(packet, packet.length);
 	}
 
 
