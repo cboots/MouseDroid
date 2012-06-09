@@ -61,16 +61,6 @@ public class CommandProcessor implements BTEventListener {
 			mStatusEventListener.onStateChanged(oldState, newState);
 		}
 		
-		if(newState == BluetoothServer.STATE_LISTEN){
-//			lblStatus.setText("Waiting for Connection");
-//			progressBar.setIndeterminate(true);
-		}else if(newState == BluetoothServer.STATE_CONNECTED){
-//			lblStatus.setText("Connected");
-//			progressBar.setIndeterminate(false);
-		}else if(newState == BluetoothServer.STATE_NONE){
-//			lblStatus.setText("Server Down");
-//			progressBar.setIndeterminate(false);
-		}
 	}
 	
 	
@@ -93,6 +83,7 @@ public class CommandProcessor implements BTEventListener {
 		
 	}
 
+	
 	byte[] commandBuffer = new byte[128];
 	int commandLength = 0;
 	
