@@ -180,16 +180,19 @@ public class CommandProcessor implements BTEventListener {
 			bb.order(ByteOrder.LITTLE_ENDIAN);
 			bb.put(commandBuffer, 2, 4);
 			int pingID = bb.getInt(0);
-			replyToPing(pingID);
+			mBTServer.gotPingPacket(pingID);
 			
+			break;
+		case PING_RETURN:
+			bb = ByteBuffer.allocate(4);
+			bb.order(ByteOrder.LITTLE_ENDIAN);
+			bb.put(commandBuffer, 2, 4);
+			pingID = bb.getInt(0);
+			mBTServer.onPingReturnPacket(pingID);
 			break;
 		}
 	}
 
-	private void replyToPing(int pingID) {
-		byte[] pingRet = BTProtocol.getPingReturnPacket(pingID);
-		mBTServer.write(pingRet, pingRet.length);
-	}
 
 	private void keyEvent(int keyCode, KeyEventType keyEventType) {
 		try{
