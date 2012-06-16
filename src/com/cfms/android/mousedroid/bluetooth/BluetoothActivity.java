@@ -8,29 +8,23 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.widget.Toast;
 
-import com.cfms.android.mousedroid.BTProtocol;
-import com.cfms.android.mousedroid.BTProtocol.PacketID;
 import com.cfms.android.mousedroid.R;
 import com.cfms.android.mousedroid.activity.MultiTouchActivity;
 import com.cfms.android.mousedroid.bluetooth.BluetoothService.BluetoothBinder;
+import com.cfms.android.mousedroid.bluetooth.BluetoothService.BluetoothEventListener;
 import com.cfms.android.mousedroid.utils.DebugLog;
 
 // TODO: Auto-generated Javadoc
 /**
  * The Class BluetoothActivity.
  */
-public class BluetoothActivity extends MultiTouchActivity {
+public class BluetoothActivity extends MultiTouchActivity implements BluetoothEventListener{
 
 	
-	/** The Version code. */
-	protected int VersionCode = -1;
 	
 	/** The Constant TAG. */
 	private static final String TAG = "BluetoothActivity";
@@ -56,13 +50,13 @@ public class BluetoothActivity extends MultiTouchActivity {
 			// LocalService instance
 			BluetoothBinder binder = (BluetoothBinder) service;
 			mBtService = binder.getService();
-			mBtService.setHandler(mHandler);
+			mBtService.setEventListener(BluetoothActivity.this);
 			mBound = true;
 		}
 
 		@Override
 		public void onServiceDisconnected(ComponentName arg0) {
-			mBtService.setHandler(null);
+			mBtService.setEventListener(null);
 			mBound = false;
 			mBtService = null;
 		}
@@ -75,14 +69,6 @@ public class BluetoothActivity extends MultiTouchActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		DebugLog.D(TAG, "+++onCreate+++");
 		super.onCreate(savedInstanceState);
-		try
-		{
-		    VersionCode = this.getPackageManager().getPackageInfo(this.getPackageName(), 0).versionCode;
-		}
-		catch (NameNotFoundException e)
-		{
-		    DebugLog.V(getTag(), e.getMessage());
-		}
 		
 		
 		// Get local Bluetooth adapter
@@ -260,159 +246,6 @@ public class BluetoothActivity extends MultiTouchActivity {
 	}
 
 	
-	// The Handler that gets information back from the BluetoothChatService
-    /** The m handler. */
-	private final Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-            case BluetoothService.MESSAGE_STATE_CHANGE:
-                onBTStateChanged(msg.arg1, msg.arg2);
-                break;
-            case BluetoothService.MESSAGE_WRITE:
-                byte[] writeBuf = (byte[]) msg.obj;
-                int length = msg.arg1;
-                onBTMessageWritten(writeBuf, length);
-                break;
-            case BluetoothService.MESSAGE_READ:
-                byte[] readBuf = (byte[]) msg.obj;
-                length = msg.arg1;
-                onBTMessageRead(readBuf, length);
-                break;
-            case BluetoothService.MESSAGE_ERROR:
-            	int errorCode = msg.arg1;
-            	onBTError(errorCode);
-            	break;
-            }
-        }
-    };
-
-    /** The command buffer. */
-    byte[] commandBuffer = new byte[128];
-	
-	/** The command length. */
-	int commandLength = 0;
-	
-	/**
-	 * Called when a new bluetooth message is received by the BluetoothService
-	 * Override this method to handle this event
-	 * By default the implementation releases the buffer back to the factory to prevent memory overloads.
-	 * Any override must call super.onBTMessageRead(message, length)
-	 * 
-	 * @param message the message
-	 * @param length the length
-	 */
-	public void onBTMessageRead(byte[] message, int length) {
-		//Parse out additional listeners
-		for(int i = 0; i< length; i++)
-		{
-			commandBuffer[commandLength] = message[i];
-			if(commandLength == 0)
-			{
-				if(message[i] == BTProtocol.PACKET_PREAMBLE){
-					commandLength++;
-				}
-			}else{
-				commandLength++;
-			}
-			
-			if(isFullCommand(commandBuffer, commandLength)){
-				executeCommand(commandBuffer, commandLength);
-				commandLength = 0;
-			}
-		}
-		
-		//Release the buffer
-		ByteBufferFactory.releaseBuffer(message);
-	}
-
-
-	/**
-	 * Checks if is full command.
-	 *
-	 * @param commandBuffer the command buffer
-	 * @param len the len
-	 * @return true, if is full command
-	 */
-	public boolean isFullCommand(byte[] commandBuffer, int len) {
-		if(len >= 4){
-			if(commandBuffer[len - 1] == BTProtocol.LF
-					&& commandBuffer[len - 2] == BTProtocol.CR){
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Execute command.
-	 *
-	 * @param commandBuffer the command buffer
-	 * @param len the len
-	 */
-	public void executeCommand(byte[] commandBuffer, int len) {
-		PacketID ID = PacketID.get(commandBuffer[1]);
-		if(ID == null)
-			return;
-		
-		switch(ID)
-		{
-		case DISCONNECT:
-			DebugLog.D(getTag(), "Disconnect Packet");
-			mBtService.disconnect();
-			break;
-		case GET_VERSION:
-			sendVersion();
-			break;
-
-		}
-	}
-
-	/**
-	 * Send version.
-	 */
-	private void sendVersion() {
-		byte msb = (byte) (VersionCode >> 8);
-		byte lsb = (byte) (VersionCode);
-		
-		byte[] packet = {BTProtocol.PACKET_PREAMBLE, PacketID.RET_VERSION.getCode(), msb, lsb, BTProtocol.CR, BTProtocol.LF};
-		mBtService.write(packet, packet.length);
-	}
-
-
-	/**
-	 * Called when a message is written out to the bluetooth socket.
-	 * Override this method to handle this event
-	 *
-	 * @param message the message
-	 * @param length the length of the message
-	 */
-	public void onBTMessageWritten(byte[] message, int length) {
-		
-	}
-	
-	/**
-	 * Called when the BluetoothService state changes
-	 * Override this method to handle this event.
-	 *
-	 * @param oldState the old state
-	 * @param newState the new state
-	 */
-	public void onBTStateChanged(int oldState, int newState){
-		//Do nothing, event handler
-	}
-
-	
-	/**
-	 * On BluetoothService Error
-	 * Override this method to handle this event.
-	 *
-	 * @param errorCode the error code
-	 */
-	public void onBTError(int errorCode) {
-		//Do nothing, event handler
-	}
-	
 	
 	/**
 	 * Send bt message.
@@ -435,5 +268,23 @@ public class BluetoothActivity extends MultiTouchActivity {
 	@Override
 	public String getTag() {
 		return TAG;
+	}
+
+	@Override
+	public void onBTMessageWritten(byte[] message, int length) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onBTStateChanged(int arg1, int arg2) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onBTError(int errorCode) {
+		// TODO Auto-generated method stub
+		
 	}
 }
