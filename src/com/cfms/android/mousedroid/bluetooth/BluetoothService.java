@@ -337,6 +337,7 @@ public class BluetoothService extends Service {
 				return;
 			r = mConnectedThread;
 		}
+		
 		// Perform the disconnect unsynchronized
 		r.disconnect();
 		r.cancel();
@@ -666,7 +667,10 @@ public class BluetoothService extends Service {
 		 */
 		public void cancel() {
 			try {
-				mmSocket.close();
+				if(mmSocket != null)
+				{
+					mmSocket.close();
+				}
 			} catch (IOException e) {
 				DebugLog.E(TAG, "close() of connect " + mmSocketType
 						+ " socket failed", e);
@@ -781,6 +785,9 @@ public class BluetoothService extends Service {
 		 */
 		public void disconnect() {
 			mmDisconnected = true;
+			if(mConnectionManager != null)
+				mConnectionManager.stopPinging();
+			
 			// Disconnect packet
 			byte[] buffer = { BTProtocol.PACKET_PREAMBLE,
 					PacketID.DISCONNECT.getCode(), BTProtocol.CR, BTProtocol.LF };
@@ -961,7 +968,7 @@ public class BluetoothService extends Service {
 		
 	}
 	
-	protected final Handler mPingHandler = new Handler(){
+	protected Handler mPingHandler = new Handler(){
 		 @Override
 	        public void handleMessage(Message msg) {
 			 	//DebugLog.D(TAG, msg.toString());
@@ -990,7 +997,6 @@ public class BluetoothService extends Service {
 	            	break;
 	            }
 	        }
-
 	};
 
 	
@@ -1017,7 +1023,6 @@ public class BluetoothService extends Service {
 		private boolean mPinging = false;
 		
 		private ArrayList<Integer> mPendingPings = new ArrayList<Integer>();
-		
 		
 		
 		public ConnectionManager()
