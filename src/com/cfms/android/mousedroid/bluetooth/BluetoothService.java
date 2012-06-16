@@ -10,6 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
 import java.util.UUID;
 
 import android.app.Notification;
@@ -106,6 +107,9 @@ public class BluetoothService extends Service {
 
 	/** The Constant ERRORCODE_CONNECTION_LOST. */
 	public static final int ERRORCODE_CONNECTION_LOST = 2;
+	
+	/** The Constant ERRORCODE_CONNECTION_TIMEOUT. */
+	public static final int ERRORCODE_CONNECTION_TIMEOUT= 3;
 
 
 	// /** The Constant MY_UUID_INSECURE. */
@@ -320,6 +324,27 @@ public class BluetoothService extends Service {
 	/**
 	 * Disconnect.
 	 */
+	public synchronized void timeoutConnection() {
+
+		// Create temporary object
+		ConnectedThread r;
+
+		error(ERRORCODE_CONNECTION_TIMEOUT);
+		
+		// Synchronize a copy of the ConnectedThread
+		synchronized (this) {
+			if (mState != STATE_CONNECTED)
+				return;
+			r = mConnectedThread;
+		}
+		// Perform the disconnect unsynchronized
+		r.disconnect();
+		r.cancel();
+	}
+	
+	/**
+	 * Disconnect.
+	 */
 	public synchronized void disconnect() {
 
 		// Create temporary object
@@ -465,7 +490,7 @@ public class BluetoothService extends Service {
 	protected void onPing(int pingID) {
 		if(mConnectionManager != null)
 		{
-			mConnectionManager.onPing(pingID);
+			mConnectionManager.onPingPacket(pingID);
 		}
 	}
 	
@@ -477,7 +502,7 @@ public class BluetoothService extends Service {
 	protected void onPingReturn(int pingID) {
 		if(mConnectionManager != null)
 		{
-			mConnectionManager.onPingReturn(pingID);
+			mConnectionManager.onPingReturnPacket(pingID);
 		}
 	}
 	
@@ -679,6 +704,8 @@ public class BluetoothService extends Service {
 			InputStream tmpIn = null;
 			OutputStream tmpOut = null;
 
+			mConnectionManager = new ConnectionManager();
+			
 			// Get the BluetoothSocket input and output streams
 			try {
 				tmpIn = socket.getInputStream();
@@ -700,7 +727,7 @@ public class BluetoothService extends Service {
 			DebugLog.I(TAG, "BEGIN mConnectedThread");
 			byte[] buffer;
 			int bytes;
-
+			mConnectionManager.startPinging();
 			// Keep listening to the InputStream while connected
 			while (true) {
 				try {
@@ -758,7 +785,9 @@ public class BluetoothService extends Service {
 			byte[] buffer = { BTProtocol.PACKET_PREAMBLE,
 					PacketID.DISCONNECT.getCode(), BTProtocol.CR, BTProtocol.LF };
 			try {
+				DebugLog.D(TAG, "Sending disconnect packet");
 				mmOutStream.write(buffer, 0, 4);
+				DebugLog.D(TAG, "disconnect packet sent");
 				// Share the sent message back to the UI Activity
 				onBTMessageWritten(buffer, 4);
 			} catch (IOException e) {
@@ -897,14 +926,14 @@ public class BluetoothService extends Service {
 			ByteBuffer bb = ByteBuffer.allocate(4);
 			bb.order(ByteOrder.LITTLE_ENDIAN);
 			bb.put(commandBuffer, 2, 4);
-			int pingID = bb.getInt();
+			int pingID = bb.getInt(0);
 			onPing(pingID);
 			break;
 		case PING_RETURN:
 			bb = ByteBuffer.allocate(4);
 			bb.order(ByteOrder.LITTLE_ENDIAN);
 			bb.put(commandBuffer, 2, 4);
-			pingID = bb.getInt();
+			pingID = bb.getInt(0);
 			onPingReturn(pingID);
 			break;
 		}
@@ -930,22 +959,159 @@ public class BluetoothService extends Service {
 
 		public void onBTError(int errorCode);
 		
-		
-		
 	}
+	
+	protected final Handler mPingHandler = new Handler(){
+		 @Override
+	        public void handleMessage(Message msg) {
+			 	//DebugLog.D(TAG, msg.toString());
+			 	if(mConnectionManager == null)
+			 		return;
+			 	
+			 	if(!isConnected())
+			 	{
+			 		mConnectionManager.stopPinging();
+			 		return;
+			 	}
+			 	
+			 	int pingID = msg.arg1;
+	            switch (msg.what) {
+	            case ConnectionManager.PING_SEND:
+	            	mConnectionManager.sendPing(pingID);
+	            	break;
+	            case ConnectionManager.PING_SEND_RESPONSE:
+	            	mConnectionManager.sendPingResponse(pingID);
+	            	break;
+	            case ConnectionManager.PING_GOT_RESPONSE:
+	            	mConnectionManager.gotResponse(pingID);
+	            	break;
+	            case ConnectionManager.PING_TIMEOUT:
+	            	mConnectionManager.pingTimeout(pingID);
+	            	break;
+	            }
+	        }
+
+	};
+
 	
 	private class ConnectionManager{
 
-		public void onPing(int pingID) {
-			// TODO Auto-generated method stub
-			
-		}
+		private static final int PING_SEND = 1;
+		
+		private static final int PING_TIMEOUT = 2;
+		
+		private static final int PING_SEND_RESPONSE = 3;
+		
+		private static final int PING_GOT_RESPONSE = 4;
+		
+		private static final int PING_TIMEOUT_MS = 1000;
+		
+		private static final int PING_PERIOD_MS = 200;
+		
+		private static final int DROPPED_PINGS_ALLOWED = 10;
+		
+		private int lastID = -1;
+		
+		private int mPingCounter = 0;
 
-		public void onPingReturn(int pingID) {
-			// TODO Auto-generated method stub
+		private boolean mPinging = false;
+		
+		private ArrayList<Integer> mPendingPings = new ArrayList<Integer>();
+		
+		
+		
+		public ConnectionManager()
+		{
 			
 		}
 		
+		protected int getNextPingID() {
+			lastID += 1;
+			return lastID;
+		}
+
+		public void startPinging(){
+			mPinging = true;
+			mPingCounter = DROPPED_PINGS_ALLOWED;
+			//Send first ping
+			Message ping = mPingHandler.obtainMessage(PING_SEND, getNextPingID(), -1);
+			ping.sendToTarget();
+		}
+		
+		public void stopPinging(){
+			mPinging = false;
+		}
+		
+		private void replyToPing(int pingID)
+		{
+			Message ping = mPingHandler.obtainMessage(PING_SEND_RESPONSE, pingID, -1);
+			ping.sendToTarget();
+		}
+		
+		public void onPingPacket(int pingID) {
+			replyToPing(pingID);
+		}
+
+		public void onPingReturnPacket(int pingID) {
+			Message ping = mPingHandler.obtainMessage(PING_GOT_RESPONSE, pingID, -1);
+			ping.sendToTarget();
+		}
+
+		public void sendPing(int pingID) {
+			//actually write ping packet
+			byte[] ping = BTProtocol.getPingPacket(pingID);
+			write(ping);
+			
+			//Queue timeout packet
+			Message timeout = mPingHandler.obtainMessage(PING_TIMEOUT, pingID, -1);
+			mPingHandler.sendMessageDelayed(timeout, PING_TIMEOUT_MS);
+			
+			//Add to list of pending pings
+			mPendingPings.add(new Integer(pingID));
+			
+			//Queue next packet
+			if(mPinging)
+			{
+				Message nextPing = mPingHandler.obtainMessage(PING_SEND, getNextPingID(), -1);
+				mPingHandler.sendMessageDelayed(nextPing, PING_PERIOD_MS);
+			}
+		}
+
+		public void pingTimeout(int pingID) {
+			if(mPendingPings.contains(new Integer(pingID)))
+			{
+				//ping timed out
+				DebugLog.I(TAG, "Ping Timed Out id="+ pingID);
+				gotResponse(pingID);
+				
+				//Decrement counter
+				mPingCounter--;
+				DebugLog.I(TAG, "ping counter=" + mPingCounter);
+				if(mPingCounter <= 0)
+				{
+					//Connection Timed Out
+					stopPinging();
+					timeoutConnection();
+				}
+			}else{
+				//ping succeeded
+				if(mPingCounter < DROPPED_PINGS_ALLOWED)
+				{
+					mPingCounter++;
+			    	DebugLog.I(TAG, "ping counter=" + mPingCounter);
+				}
+			}
+		}
+
+		public void gotResponse(int pingID) {
+			mPendingPings.remove(new Integer(pingID));
+		}
+
+		public void sendPingResponse(int pingID) {
+			//actually write response packet
+			byte[] pingResponse = BTProtocol.getPingReturnPacket(pingID);
+			write(pingResponse);
+		}		
 	}
 
 }
