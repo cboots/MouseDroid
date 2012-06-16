@@ -119,6 +119,7 @@ public class CommandProcessor implements BTEventListener {
 	}
 
 	public void executeCommand(byte[] commandBuffer, int len) {
+		if(D) MyLog.log("execute Command: " + commandBuffer[1]);
 		PacketID ID = PacketID.get(commandBuffer[1]);
 		if(ID == null)
 			return;
@@ -174,7 +175,20 @@ public class CommandProcessor implements BTEventListener {
 			int keyCode = bb.getInt(0);
 			keyEvent(keyCode, KeyEventType.get(commandBuffer[2]));
 			break;
+		case PING:
+			bb = ByteBuffer.allocate(4);
+			bb.order(ByteOrder.LITTLE_ENDIAN);
+			bb.put(commandBuffer, 2, 4);
+			int pingID = bb.getInt(0);
+			replyToPing(pingID);
+			
+			break;
 		}
+	}
+
+	private void replyToPing(int pingID) {
+		byte[] pingRet = BTProtocol.getPingReturnPacket(pingID);
+		mBTServer.write(pingRet, pingRet.length);
 	}
 
 	private void keyEvent(int keyCode, KeyEventType keyEventType) {
