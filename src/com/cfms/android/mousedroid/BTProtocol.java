@@ -290,10 +290,10 @@ public class BTProtocol {
 		bb.order(ByteOrder.LITTLE_ENDIAN);
 		bb.putInt(pingID);
 
-		packet[3] = bb.get(0);
-		packet[4] = bb.get(1);
-		packet[5] = bb.get(2);
-		packet[6] = bb.get(3);
+		packet[2] = bb.get(0);
+		packet[3] = bb.get(1);
+		packet[4] = bb.get(2);
+		packet[5] = bb.get(3);
 
 		return packet;
 	}
@@ -306,10 +306,10 @@ public class BTProtocol {
 		bb.order(ByteOrder.LITTLE_ENDIAN);
 		bb.putInt(pingID);
 
-		packet[3] = bb.get(0);
-		packet[4] = bb.get(1);
-		packet[5] = bb.get(2);
-		packet[6] = bb.get(3);
+		packet[2] = bb.get(0);
+		packet[3] = bb.get(1);
+		packet[4] = bb.get(2);
+		packet[5] = bb.get(3);
 
 		return packet;
 	}
