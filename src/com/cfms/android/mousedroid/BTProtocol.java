@@ -19,7 +19,7 @@ public class BTProtocol {
 	 */
 	public static enum PacketID {
 		DISCONNECT(1), GET_VERSION(2), RET_VERSION(3), MOVE_MOUSE(4), MOUSE_BUTTON_EVENT(
-				5), MOUSE_WHEEL_EVENT(6), KEY_EVENT(7);
+				5), MOUSE_WHEEL_EVENT(6), KEY_EVENT(7), PING(8), PING_RETURN(9);
 
 		private static final Map<Byte, PacketID> lookup = new HashMap<Byte, PacketID>();
 
@@ -272,6 +272,39 @@ public class BTProtocol {
 		ByteBuffer bb = ByteBuffer.allocate(4);
 		bb.order(ByteOrder.LITTLE_ENDIAN);
 		bb.putInt(keycode);
+
+		packet[3] = bb.get(0);
+		packet[4] = bb.get(1);
+		packet[5] = bb.get(2);
+		packet[6] = bb.get(3);
+
+		return packet;
+	}
+	
+	
+	public static byte[] getPingPacket(int pingID) {
+		byte[] packet = new byte[] { PACKET_PREAMBLE,
+				PacketID.PING.getCode(),  0, 0, 0, 0, CR, LF };
+
+		ByteBuffer bb = ByteBuffer.allocate(4);
+		bb.order(ByteOrder.LITTLE_ENDIAN);
+		bb.putInt(pingID);
+
+		packet[3] = bb.get(0);
+		packet[4] = bb.get(1);
+		packet[5] = bb.get(2);
+		packet[6] = bb.get(3);
+
+		return packet;
+	}
+	
+	public static byte[] getPingReturnPacket(int pingID) {
+		byte[] packet = new byte[] { PACKET_PREAMBLE,
+				PacketID.PING_RETURN.getCode(),  0, 0, 0, 0, CR, LF };
+
+		ByteBuffer bb = ByteBuffer.allocate(4);
+		bb.order(ByteOrder.LITTLE_ENDIAN);
+		bb.putInt(pingID);
 
 		packet[3] = bb.get(0);
 		packet[4] = bb.get(1);
