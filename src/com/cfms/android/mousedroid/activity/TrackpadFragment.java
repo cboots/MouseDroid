@@ -108,7 +108,6 @@ public class TrackpadFragment extends Fragment implements TouchpadListener, Scro
 		{
 			mListener.onMouseButtonEvent(mbe, mb);
 		}
-		
 	}
 
 	@Override

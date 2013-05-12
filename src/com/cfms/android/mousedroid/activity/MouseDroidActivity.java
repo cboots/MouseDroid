@@ -89,6 +89,11 @@ public class MouseDroidActivity extends BluetoothActivity {
         startActivity(i);
     }
 	
+	public void testButton4(final View target) {
+        Intent i = new Intent(this, MouseActivity.class);
+        startActivity(i);
+    }
+	
     private final String TAG = "MouseDroidActivity";
 	@Override
 	public String getTag() {

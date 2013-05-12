@@ -4,9 +4,9 @@ import org.ejml.simple.SimpleMatrix;
 
 public class MouseKalmanFilter {
 
-	private static final double GRAVITY = 9.81;
-	private static final double GAMMA_A = 0.975;
-	private static final double GAMMA_V = 0.9;
+	private static final double DEFAULT_GAMMA_A = 0.975;
+	
+	private static final double DEFAULT_GAMMA_V = 0.9;
 	private static final double[] DEFAULT_R = {0.2, 0.2, 0.2};
 	private static final double[] DEFAULT_Q = {0.1, 0.1, 0.1, 0.2, 0.2, 0.2};
 	
@@ -25,7 +25,7 @@ public class MouseKalmanFilter {
 		mH.set(1,1,1);
 		mH.set(2,2,1);
 		
-		mF = SimpleMatrix.diag(GAMMA_A, GAMMA_A, GAMMA_A, GAMMA_V, GAMMA_V, GAMMA_V);
+		mF = SimpleMatrix.diag(DEFAULT_GAMMA_A, DEFAULT_GAMMA_A, DEFAULT_GAMMA_A, DEFAULT_GAMMA_V, DEFAULT_GAMMA_V, DEFAULT_GAMMA_V);
 		mR = SimpleMatrix.diag(DEFAULT_R);
 		mQ = SimpleMatrix.diag(DEFAULT_Q);
 		
@@ -42,7 +42,20 @@ public class MouseKalmanFilter {
 		mP = P;
 	}
 	
-	public void update(double dt, double[] unbiased_accel)
+	public SimpleMatrix getState()
+	{
+		return mX;
+	}
+	
+	public void setMeasurementNoiseModel(SimpleMatrix R){
+		mR = R.copy();
+	}
+	
+	public void setProcessNoiseModel(SimpleMatrix Q){
+		mQ = Q.copy();
+	}
+	
+	public void update(double dt, double[] linear_accel)
 	{
 		//Update F with dt
 		mF.set(4,0,dt);
@@ -58,9 +71,9 @@ public class MouseKalmanFilter {
 		
 		//Measurement update
 		SimpleMatrix z = new SimpleMatrix(3,1);
-		z.set(0, 0, unbiased_accel[0]);
-		z.set(1, 0, unbiased_accel[1]);
-		z.set(2, 0, unbiased_accel[2]-GRAVITY);
+		z.set(0, 0, linear_accel[0]);
+		z.set(1, 0, linear_accel[1]);
+		z.set(2, 0, linear_accel[2]);
 		
 		SimpleMatrix yhat = z.minus(mH.mult(mX));
 		SimpleMatrix S = mH.mult(mP).mult(mH.transpose()).plus(mR);

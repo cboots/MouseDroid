@@ -16,8 +16,8 @@
             android:layout_width="match_parent"
             android:layout_height="0dip"
             android:layout_weight="1"
-            android:orientation="horizontal" >
-
+            android:orientation="horizontal">
+            
             <com.cfms.android.mousedroid.view.KeyButton
                 android:id="@+id/numpad_numlock"
                 android:layout_width="0dip"

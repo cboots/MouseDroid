@@ -8,7 +8,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="@string/hello" />
-
+    
     <Button
         android:id="@+id/button1"
         android:layout_width="wrap_content"
@@ -16,15 +16,21 @@
         android:onClick="testButton"
         android:text="trackpad" />
 	<Button
-        android:id="@+id/button1"
+        android:id="@+id/button2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="testButton2"
         android:text="numpad" />
 	<Button
-        android:id="@+id/button1"
+        android:id="@+id/button3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="testButton3"
         android:text="settings" />
+	<Button
+        android:id="@+id/button4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="testButton4"
+        android:text="Mouse" />
 </LinearLayout>
