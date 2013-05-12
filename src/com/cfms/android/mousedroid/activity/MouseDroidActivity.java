@@ -20,6 +20,8 @@ public class MouseDroidActivity extends BluetoothActivity {
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
+    	SettingsActivity.InitDefaultPreferences(this, false);
+    	
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mouse_droid_home);
     }
@@ -85,7 +87,7 @@ public class MouseDroidActivity extends BluetoothActivity {
     }
 
 	public void testButton3(final View target) {
-        Intent i = new Intent(this, PreferencesActivity.class);
+        Intent i = new Intent(this, SettingsActivity.class);
         startActivity(i);
     }
 	

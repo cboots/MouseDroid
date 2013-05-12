@@ -27,6 +27,7 @@ import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -34,7 +35,6 @@ import com.cfms.android.mousedroid.BTProtocol;
 import com.cfms.android.mousedroid.BTProtocol.PacketID;
 import com.cfms.android.mousedroid.R;
 import com.cfms.android.mousedroid.activity.MouseDroidActivity;
-import com.cfms.android.mousedroid.activity.PreferencesActivity;
 import com.cfms.android.mousedroid.utils.DebugLog;
 
 // TODO: Auto-generated Javadoc
@@ -45,7 +45,7 @@ public class BluetoothService extends Service {
 
 	/** The Version code. */
 	protected int VersionCode = -1;
-	
+
 	/** The Constant TAG. */
 	private final static String TAG = "BluetoothService";
 
@@ -66,7 +66,7 @@ public class BluetoothService extends Service {
 	private ConnectedThread mConnectedThread;
 
 	private ConnectionManager mConnectionManager;
-	
+
 	/** The State. */
 	private int mState;
 
@@ -107,10 +107,9 @@ public class BluetoothService extends Service {
 
 	/** The Constant ERRORCODE_CONNECTION_LOST. */
 	public static final int ERRORCODE_CONNECTION_LOST = 2;
-	
-	/** The Constant ERRORCODE_CONNECTION_TIMEOUT. */
-	public static final int ERRORCODE_CONNECTION_TIMEOUT= 3;
 
+	/** The Constant ERRORCODE_CONNECTION_TIMEOUT. */
+	public static final int ERRORCODE_CONNECTION_TIMEOUT = 3;
 
 	// /** The Constant MY_UUID_INSECURE. */
 	// private static final UUID MY_UUID_INSECURE = UUID
@@ -156,13 +155,11 @@ public class BluetoothService extends Service {
 	public void onCreate() {
 		DebugLog.I("BluetoothService", "Service onCreate()");
 		super.onCreate();
-		try
-		{
-		    VersionCode = this.getPackageManager().getPackageInfo(this.getPackageName(), 0).versionCode;
-		}
-		catch (NameNotFoundException e)
-		{
-		    DebugLog.V(TAG, e.getMessage());
+		try {
+			VersionCode = this.getPackageManager().getPackageInfo(
+					this.getPackageName(), 0).versionCode;
+		} catch (NameNotFoundException e) {
+			DebugLog.V(TAG, e.getMessage());
 		}
 
 		mAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -330,19 +327,19 @@ public class BluetoothService extends Service {
 		ConnectedThread r;
 
 		error(ERRORCODE_CONNECTION_TIMEOUT);
-		
+
 		// Synchronize a copy of the ConnectedThread
 		synchronized (this) {
 			if (mState != STATE_CONNECTED)
 				return;
 			r = mConnectedThread;
 		}
-		
+
 		// Perform the disconnect unsynchronized
 		r.disconnect();
 		r.cancel();
 	}
-	
+
 	/**
 	 * Disconnect.
 	 */
@@ -363,8 +360,9 @@ public class BluetoothService extends Service {
 
 	/**
 	 * Start the ConnectThread to initiate a connection to a remote device.
-	 *
-	 * @param device The BluetoothDevice to connect
+	 * 
+	 * @param device
+	 *            The BluetoothDevice to connect
 	 */
 	public synchronized void connect(BluetoothDevice device) {
 		DebugLog.D(TAG, "connect to: " + device);
@@ -379,10 +377,10 @@ public class BluetoothService extends Service {
 				mConnectThread = null;
 			}
 		}
-
 		// Start the thread to connect with the given device
-		mConnectThread = new ConnectThread(device, 	PreferencesActivity.getBoolean(getApplicationContext(),
-						PreferencesActivity.PREF_HTC_BLUETOOTH_COMPATIBILITY));
+		mConnectThread = new ConnectThread(device, PreferenceManager
+				.getDefaultSharedPreferences(getApplicationContext())
+				.getBoolean("htc_bluetooth_compatibility", false));
 		mConnectThread.start();
 		setState(STATE_CONNECTING);
 	}
@@ -459,9 +457,11 @@ public class BluetoothService extends Service {
 
 	/**
 	 * On bt message read.
-	 *
-	 * @param buffer the buffer
-	 * @param length the length
+	 * 
+	 * @param buffer
+	 *            the buffer
+	 * @param length
+	 *            the length
 	 */
 	protected void onBTMessageRead(byte[] buffer, int length) {
 		if (mHandler != null) {
@@ -472,9 +472,11 @@ public class BluetoothService extends Service {
 
 	/**
 	 * On bt message written.
-	 *
-	 * @param buffer the buffer
-	 * @param length the length
+	 * 
+	 * @param buffer
+	 *            the buffer
+	 * @param length
+	 *            the length
 	 */
 	protected void onBTMessageWritten(byte[] buffer, int length) {
 		if (mHandler != null) {
@@ -483,33 +485,28 @@ public class BluetoothService extends Service {
 		}
 	}
 
-	
 	/**
 	 * Called when a ping packet is received
+	 * 
 	 * @param pingID
 	 */
 	protected void onPing(int pingID) {
-		if(mConnectionManager != null)
-		{
+		if (mConnectionManager != null) {
 			mConnectionManager.onPingPacket(pingID);
 		}
 	}
-	
-	
+
 	/**
 	 * Called when a ping return packet is received
+	 * 
 	 * @param pingID
 	 */
 	protected void onPingReturn(int pingID) {
-		if(mConnectionManager != null)
-		{
+		if (mConnectionManager != null) {
 			mConnectionManager.onPingReturnPacket(pingID);
 		}
 	}
-	
-	
-	
-	
+
 	/**
 	 * Indicate that the connection attempt failed and notify the UI Activity.
 	 */
@@ -548,8 +545,9 @@ public class BluetoothService extends Service {
 
 		/**
 		 * Instantiates a new connect thread.
-		 *
-		 * @param device the device
+		 * 
+		 * @param device
+		 *            the device
 		 */
 		@SuppressWarnings("unused")
 		public ConnectThread(BluetoothDevice device) {
@@ -558,9 +556,11 @@ public class BluetoothService extends Service {
 
 		/**
 		 * Instantiates a new connect thread.
-		 *
-		 * @param device the device
-		 * @param useHTCCompatibility the use htc compatibility
+		 * 
+		 * @param device
+		 *            the device
+		 * @param useHTCCompatibility
+		 *            the use htc compatibility
 		 */
 		public ConnectThread(BluetoothDevice device, boolean useHTCCompatibility) {
 			mmDevice = device;
@@ -572,8 +572,9 @@ public class BluetoothService extends Service {
 
 		/**
 		 * Creates the socket.
-		 *
-		 * @param device the device
+		 * 
+		 * @param device
+		 *            the device
 		 * @return the bluetooth socket
 		 */
 		private BluetoothSocket createSocket(BluetoothDevice device) {
@@ -593,8 +594,9 @@ public class BluetoothService extends Service {
 
 		/**
 		 * Creates the compatibility socket.
-		 *
-		 * @param device the device
+		 * 
+		 * @param device
+		 *            the device
 		 * @return the bluetooth socket
 		 */
 		private BluetoothSocket createCompatibilitySocket(BluetoothDevice device) {
@@ -667,8 +669,7 @@ public class BluetoothService extends Service {
 		 */
 		public void cancel() {
 			try {
-				if(mmSocket != null)
-				{
+				if (mmSocket != null) {
 					mmSocket.close();
 				}
 			} catch (IOException e) {
@@ -709,7 +710,7 @@ public class BluetoothService extends Service {
 			OutputStream tmpOut = null;
 
 			mConnectionManager = new ConnectionManager();
-			
+
 			// Get the BluetoothSocket input and output streams
 			try {
 				tmpIn = socket.getInputStream();
@@ -785,9 +786,9 @@ public class BluetoothService extends Service {
 		 */
 		public void disconnect() {
 			mmDisconnected = true;
-			if(mConnectionManager != null)
+			if (mConnectionManager != null)
 				mConnectionManager.stopPinging();
-			
+
 			// Disconnect packet
 			byte[] buffer = { BTProtocol.PACKET_PREAMBLE,
 					PacketID.DISCONNECT.getCode(), BTProtocol.CR, BTProtocol.LF };
@@ -815,94 +816,92 @@ public class BluetoothService extends Service {
 	}
 
 	// The Handler that gets information back from the BluetoothChatService
-    /** The m handler. */
+	/** The m handler. */
 	private final Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-            case BluetoothService.MESSAGE_STATE_CHANGE:
-            	if(mListener != null)
-            	{
-            		mListener.onBTStateChanged(msg.arg1, msg.arg2);
-            	}
-                
-                break;
-            case BluetoothService.MESSAGE_WRITE:
-                byte[] writeBuf = (byte[]) msg.obj;
-                int length = msg.arg1;
-                if(mListener != null)
-                {
-                	mListener.onBTMessageWritten(writeBuf, length);
-                }
-                break;
-            case BluetoothService.MESSAGE_READ:
-                byte[] readBuf = (byte[]) msg.obj;
-                length = msg.arg1;
-                //parse message and possibly distribute command
-                ParseBTMessage(readBuf, length);
-                break;
-            case BluetoothService.MESSAGE_ERROR:
-            	int errorCode = msg.arg1;
-            	if(mListener != null)
-            	{
-            		mListener.onBTError(errorCode);
-            	}
-            	break;
-            }
-        }
-    };
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case BluetoothService.MESSAGE_STATE_CHANGE:
+				if (mListener != null) {
+					mListener.onBTStateChanged(msg.arg1, msg.arg2);
+				}
 
-    /** The command buffer. */
-    byte[] commandBuffer = new byte[128];
-	
+				break;
+			case BluetoothService.MESSAGE_WRITE:
+				byte[] writeBuf = (byte[]) msg.obj;
+				int length = msg.arg1;
+				if (mListener != null) {
+					mListener.onBTMessageWritten(writeBuf, length);
+				}
+				break;
+			case BluetoothService.MESSAGE_READ:
+				byte[] readBuf = (byte[]) msg.obj;
+				length = msg.arg1;
+				// parse message and possibly distribute command
+				ParseBTMessage(readBuf, length);
+				break;
+			case BluetoothService.MESSAGE_ERROR:
+				int errorCode = msg.arg1;
+				if (mListener != null) {
+					mListener.onBTError(errorCode);
+				}
+				break;
+			}
+		}
+	};
+
+	/** The command buffer. */
+	byte[] commandBuffer = new byte[128];
+
 	/** The command length. */
 	int commandLength = 0;
-	
+
 	/**
 	 * Called when a new bluetooth message is received by the BluetoothService
-	 * Override this method to handle this event
-	 * By default the implementation releases the buffer back to the factory to prevent memory overloads.
-	 * Any override must call super.onBTMessageRead(message, length)
+	 * Override this method to handle this event By default the implementation
+	 * releases the buffer back to the factory to prevent memory overloads. Any
+	 * override must call super.onBTMessageRead(message, length)
 	 * 
-	 * @param message the message
-	 * @param length the length
+	 * @param message
+	 *            the message
+	 * @param length
+	 *            the length
 	 */
 	public void ParseBTMessage(byte[] message, int length) {
-		//Parse out additional listeners
-		for(int i = 0; i< length; i++)
-		{
+		// Parse out additional listeners
+		for (int i = 0; i < length; i++) {
 			commandBuffer[commandLength] = message[i];
-			if(commandLength == 0)
-			{
-				if(message[i] == BTProtocol.PACKET_PREAMBLE){
+			if (commandLength == 0) {
+				if (message[i] == BTProtocol.PACKET_PREAMBLE) {
 					commandLength++;
 				}
-			}else{
+			} else {
 				commandLength++;
 			}
-			
-			if(isFullCommand(commandBuffer, commandLength)){
+
+			if (isFullCommand(commandBuffer, commandLength)) {
 				executeCommand(commandBuffer, commandLength);
 				commandLength = 0;
 			}
 		}
-		
-		//Release the buffer
+
+		// Release the buffer
 		ByteBufferFactory.releaseBuffer(message);
 	}
 
-
 	/**
 	 * Checks if is full command.
-	 *
-	 * @param commandBuffer the command buffer
-	 * @param len the len
+	 * 
+	 * @param commandBuffer
+	 *            the command buffer
+	 * @param len
+	 *            the len
 	 * @return true, if is full command
 	 */
 	public boolean isFullCommand(byte[] commandBuffer, int len) {
-		if(len >= 4){
-			if(commandBuffer[len - 1] == BTProtocol.LF
-					&& commandBuffer[len - 2] == BTProtocol.CR){
+		if (len >= 4) {
+			if (commandBuffer[len - 1] == BTProtocol.LF
+					&& commandBuffer[len - 2] == BTProtocol.CR) {
 				return true;
 			}
 		}
@@ -911,17 +910,18 @@ public class BluetoothService extends Service {
 
 	/**
 	 * Execute command.
-	 *
-	 * @param commandBuffer the command buffer
-	 * @param len the len
+	 * 
+	 * @param commandBuffer
+	 *            the command buffer
+	 * @param len
+	 *            the len
 	 */
 	public void executeCommand(byte[] commandBuffer, int len) {
 		PacketID ID = PacketID.get(commandBuffer[1]);
-		if(ID == null)
+		if (ID == null)
 			return;
-		
-		switch(ID)
-		{
+
+		switch (ID) {
 		case DISCONNECT:
 			DebugLog.D(TAG, "Disconnect Packet");
 			disconnect();
@@ -952,158 +952,154 @@ public class BluetoothService extends Service {
 	private void sendVersion() {
 		byte msb = (byte) (VersionCode >> 8);
 		byte lsb = (byte) (VersionCode);
-		
-		byte[] packet = {BTProtocol.PACKET_PREAMBLE, PacketID.RET_VERSION.getCode(), msb, lsb, BTProtocol.CR, BTProtocol.LF};
+
+		byte[] packet = { BTProtocol.PACKET_PREAMBLE,
+				PacketID.RET_VERSION.getCode(), msb, lsb, BTProtocol.CR,
+				BTProtocol.LF };
 		write(packet, packet.length);
 	}
 
-	
-	
-	public interface BluetoothEventListener{
+	public interface BluetoothEventListener {
 		public void onBTMessageWritten(byte[] message, int length);
 
 		public void onBTStateChanged(int arg1, int arg2);
 
 		public void onBTError(int errorCode);
-		
+
 	}
-	
-	protected Handler mPingHandler = new Handler(){
-		 @Override
-	        public void handleMessage(Message msg) {
-			 	//DebugLog.D(TAG, msg.toString());
-			 	if(mConnectionManager == null)
-			 		return;
-			 	
-			 	if(!isConnected())
-			 	{
-			 		mConnectionManager.stopPinging();
-			 		return;
-			 	}
-			 	
-			 	int pingID = msg.arg1;
-	            switch (msg.what) {
-	            case ConnectionManager.PING_SEND:
-	            	mConnectionManager.sendPing(pingID);
-	            	break;
-	            case ConnectionManager.PING_SEND_RESPONSE:
-	            	mConnectionManager.sendPingResponse(pingID);
-	            	break;
-	            case ConnectionManager.PING_GOT_RESPONSE:
-	            	mConnectionManager.gotResponse(pingID);
-	            	break;
-	            case ConnectionManager.PING_TIMEOUT:
-	            	mConnectionManager.pingTimeout(pingID);
-	            	break;
-	            }
-	        }
+
+	protected Handler mPingHandler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			// DebugLog.D(TAG, msg.toString());
+			if (mConnectionManager == null)
+				return;
+
+			if (!isConnected()) {
+				mConnectionManager.stopPinging();
+				return;
+			}
+
+			int pingID = msg.arg1;
+			switch (msg.what) {
+			case ConnectionManager.PING_SEND:
+				mConnectionManager.sendPing(pingID);
+				break;
+			case ConnectionManager.PING_SEND_RESPONSE:
+				mConnectionManager.sendPingResponse(pingID);
+				break;
+			case ConnectionManager.PING_GOT_RESPONSE:
+				mConnectionManager.gotResponse(pingID);
+				break;
+			case ConnectionManager.PING_TIMEOUT:
+				mConnectionManager.pingTimeout(pingID);
+				break;
+			}
+		}
 	};
 
-	
-	private class ConnectionManager{
+	private class ConnectionManager {
 
 		private static final int PING_SEND = 1;
-		
+
 		private static final int PING_TIMEOUT = 2;
-		
+
 		private static final int PING_SEND_RESPONSE = 3;
-		
+
 		private static final int PING_GOT_RESPONSE = 4;
-		
+
 		private static final int PING_TIMEOUT_MS = 1000;
-		
+
 		private static final int PING_PERIOD_MS = 200;
-		
+
 		private static final int DROPPED_PINGS_ALLOWED = 10;
-		
+
 		private int lastID = -1;
-		
+
 		private int mPingCounter = 0;
 
 		private boolean mPinging = false;
-		
+
 		private ArrayList<Integer> mPendingPings = new ArrayList<Integer>();
-		
-		
-		public ConnectionManager()
-		{
-			
+
+		public ConnectionManager() {
+
 		}
-		
+
 		protected int getNextPingID() {
 			lastID += 1;
 			return lastID;
 		}
 
-		public void startPinging(){
+		public void startPinging() {
 			mPinging = true;
 			mPingCounter = DROPPED_PINGS_ALLOWED;
-			//Send first ping
-			Message ping = mPingHandler.obtainMessage(PING_SEND, getNextPingID(), -1);
+			// Send first ping
+			Message ping = mPingHandler.obtainMessage(PING_SEND,
+					getNextPingID(), -1);
 			ping.sendToTarget();
 		}
-		
-		public void stopPinging(){
+
+		public void stopPinging() {
 			mPinging = false;
 		}
-		
-		private void replyToPing(int pingID)
-		{
-			Message ping = mPingHandler.obtainMessage(PING_SEND_RESPONSE, pingID, -1);
+
+		private void replyToPing(int pingID) {
+			Message ping = mPingHandler.obtainMessage(PING_SEND_RESPONSE,
+					pingID, -1);
 			ping.sendToTarget();
 		}
-		
+
 		public void onPingPacket(int pingID) {
 			replyToPing(pingID);
 		}
 
 		public void onPingReturnPacket(int pingID) {
-			Message ping = mPingHandler.obtainMessage(PING_GOT_RESPONSE, pingID, -1);
+			Message ping = mPingHandler.obtainMessage(PING_GOT_RESPONSE,
+					pingID, -1);
 			ping.sendToTarget();
 		}
 
 		public void sendPing(int pingID) {
-			//actually write ping packet
+			// actually write ping packet
 			byte[] ping = BTProtocol.getPingPacket(pingID);
 			write(ping);
-			
-			//Queue timeout packet
-			Message timeout = mPingHandler.obtainMessage(PING_TIMEOUT, pingID, -1);
+
+			// Queue timeout packet
+			Message timeout = mPingHandler.obtainMessage(PING_TIMEOUT, pingID,
+					-1);
 			mPingHandler.sendMessageDelayed(timeout, PING_TIMEOUT_MS);
-			
-			//Add to list of pending pings
+
+			// Add to list of pending pings
 			mPendingPings.add(new Integer(pingID));
-			
-			//Queue next packet
-			if(mPinging)
-			{
-				Message nextPing = mPingHandler.obtainMessage(PING_SEND, getNextPingID(), -1);
+
+			// Queue next packet
+			if (mPinging) {
+				Message nextPing = mPingHandler.obtainMessage(PING_SEND,
+						getNextPingID(), -1);
 				mPingHandler.sendMessageDelayed(nextPing, PING_PERIOD_MS);
 			}
 		}
 
 		public void pingTimeout(int pingID) {
-			if(mPendingPings.contains(new Integer(pingID)))
-			{
-				//ping timed out
-				DebugLog.I(TAG, "Ping Timed Out id="+ pingID);
+			if (mPendingPings.contains(new Integer(pingID))) {
+				// ping timed out
+				DebugLog.I(TAG, "Ping Timed Out id=" + pingID);
 				gotResponse(pingID);
-				
-				//Decrement counter
+
+				// Decrement counter
 				mPingCounter--;
 				DebugLog.I(TAG, "ping counter=" + mPingCounter);
-				if(mPingCounter <= 0)
-				{
-					//Connection Timed Out
+				if (mPingCounter <= 0) {
+					// Connection Timed Out
 					stopPinging();
 					timeoutConnection();
 				}
-			}else{
-				//ping succeeded
-				if(mPingCounter < DROPPED_PINGS_ALLOWED)
-				{
+			} else {
+				// ping succeeded
+				if (mPingCounter < DROPPED_PINGS_ALLOWED) {
 					mPingCounter++;
-			    	DebugLog.I(TAG, "ping counter=" + mPingCounter);
+					DebugLog.I(TAG, "ping counter=" + mPingCounter);
 				}
 			}
 		}
@@ -1113,10 +1109,10 @@ public class BluetoothService extends Service {
 		}
 
 		public void sendPingResponse(int pingID) {
-			//actually write response packet
+			// actually write response packet
 			byte[] pingResponse = BTProtocol.getPingReturnPacket(pingID);
 			write(pingResponse);
-		}		
+		}
 	}
 
 }

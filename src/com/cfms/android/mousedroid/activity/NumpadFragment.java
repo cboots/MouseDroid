@@ -1,6 +1,7 @@
 package com.cfms.android.mousedroid.activity;
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,7 +58,7 @@ public class NumpadFragment extends Fragment implements KeyEventListener {
 	}
 	
 	private void setupKey(MultiTouchActivity activity, View root, int viewId, int keyCode){
-		boolean vibrate = PreferencesActivity.getBoolean(activity, PreferencesActivity.PREF_KEY_VIBRATE);
+		boolean vibrate = PreferenceManager.getDefaultSharedPreferences(activity).getBoolean("key_vibrate", false);
 		KeyButton button = (KeyButton) root.findViewById(viewId);
 		button.setKeyCode(keyCode);
 		button.setOnTouchListener(activity);

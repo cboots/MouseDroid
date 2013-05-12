@@ -1,6 +1,7 @@
 package com.cfms.android.mousedroid.activity;
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.FragmentActivity;
 
 import com.cfms.android.mousedroid.R;
@@ -17,16 +18,17 @@ public abstract class BaseActivity extends FragmentActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		DebugLog.D(getTag(), "+++OnCreate+++");
-		setTheme = PreferencesActivity.getInteger(this, PreferencesActivity.PREF_THEME);
+
+		setTheme = PreferenceManager.getDefaultSharedPreferences(this).getInt("theme", 0);
 		switch(setTheme)
 		{
-		case PreferencesActivity.THEME_DEFAULT:
+		case 0:
 			this.setTheme(R.style.Theme_Dark);
 			break;
-		case PreferencesActivity.THEME_LIGHT:
+		case 1:
 			this.setTheme(R.style.Theme_Light);
 			break;
-		case PreferencesActivity.THEME_COLORFUL:
+		case 2:
 			this.setTheme(R.style.Theme_Colorful);
 			break;
 		}
@@ -38,7 +40,7 @@ public abstract class BaseActivity extends FragmentActivity {
 	public void onResume() {
 		DebugLog.D(getTag(), "+  OnResume  +");
 		super.onResume();
-		if(setTheme != PreferencesActivity.getInteger(this, PreferencesActivity.PREF_THEME))
+		if(setTheme != PreferenceManager.getDefaultSharedPreferences(this).getInt("theme", 0))
 		{
 			//Theme has changed, restart activity.
 			startActivity(getIntent());
@@ -57,12 +59,12 @@ public abstract class BaseActivity extends FragmentActivity {
 		DebugLog.D(getTag(), "++ OnStart ++");
 		super.onStart();
 		
-		if(PreferencesActivity
-				.getBoolean(this, PreferencesActivity.PREF_FLURRY_ENABLED))
+		boolean flurry_en = PreferenceManager.getDefaultSharedPreferences(this).getBoolean("flurry_enabled", false);
+		
+		if(flurry_en)
 		{
 			
-			if(!PreferencesActivity
-					.getBoolean(this, PreferencesActivity.PREF_FLURRY_LOCATION_ENABLED))
+			if(!PreferenceManager.getDefaultSharedPreferences(this).getBoolean("flurry_loc_enabled", false))
 			{
 				FlurryAgent.setReportLocation(false);
 			}

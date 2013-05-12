@@ -1,6 +1,7 @@
 package com.cfms.android.mousedroid.activity;
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,7 +30,7 @@ public class TrackpadFragment extends Fragment implements TouchpadListener, Scro
 			Bundle savedInstanceState) {
 		MultiTouchActivity activity = (MultiTouchActivity) getActivity();
 
-		boolean vibrate = PreferencesActivity.getBoolean(activity, PreferencesActivity.PREF_KEY_VIBRATE);
+		boolean vibrate = PreferenceManager.getDefaultSharedPreferences(activity).getBoolean("key_vibrate", true);
 		
 		View v = inflater.inflate(R.layout.trackpad_fragment, container, false);
 		MyMouseButton button1 = (MyMouseButton) v.findViewById(R.id.trackpad_button1);
