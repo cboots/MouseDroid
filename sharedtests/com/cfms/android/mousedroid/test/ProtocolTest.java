@@ -7,16 +7,16 @@ import android.test.ActivityInstrumentationTestCase2;
 
 import com.cfms.android.mousedroid.BTProtocol;
 import com.cfms.android.mousedroid.KeyCode;
-import com.cfms.android.mousedroid.activity.PreferencesActivity;
+import com.cfms.android.mousedroid.activity.MouseDroidActivity;
 
 public class ProtocolTest extends
-		ActivityInstrumentationTestCase2<PreferencesActivity> {
+		ActivityInstrumentationTestCase2<MouseDroidActivity> {
 
-	PreferencesActivity mActivity;
+	MouseDroidActivity mActivity;
 	
 	public ProtocolTest()
 	{
-		super(PreferencesActivity.class);
+		super(MouseDroidActivity.class);
 	}
 	
     @Override

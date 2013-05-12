@@ -2,17 +2,17 @@ package com.cfms.android.mousedroid.test;
 
 import android.test.ActivityInstrumentationTestCase2;
 
-import com.cfms.android.mousedroid.activity.PreferencesActivity;
+import com.cfms.android.mousedroid.activity.MouseDroidActivity;
 import com.cfms.android.mousedroid.bluetooth.ByteBufferFactory;
 
 public class ByteBufferFactoryTest extends
-		ActivityInstrumentationTestCase2<PreferencesActivity> {
+		ActivityInstrumentationTestCase2<MouseDroidActivity> {
 
-	PreferencesActivity mActivity;
+	MouseDroidActivity mActivity;
 	
 	public ByteBufferFactoryTest()
 	{
-		super(PreferencesActivity.class);
+		super(MouseDroidActivity.class);
 	}
 	
     @Override
