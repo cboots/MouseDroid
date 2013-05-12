@@ -1,7 +1,6 @@
 package com.cfms.android.mousedroid.activity;
 
-import org.ejml.simple.SimpleMatrix;
-
+import Jama.Matrix;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -154,10 +153,10 @@ public class MouseFragment extends Fragment implements SensorEventListener {
 		
 		mKalmanFilter.update(dt, LinearAccel);
 		
-		SimpleMatrix estimate = mKalmanFilter.getState();
-		double xVelEst = estimate.get(3);
-		double yVelEst = estimate.get(4);
-		double zVelEst = estimate.get(5);
+		Matrix estimate = mKalmanFilter.getState();
+		double xVelEst = estimate.get(3, 0);
+		double yVelEst = estimate.get(4, 0);
+		double zVelEst = estimate.get(5, 0);
 		
 		//Update TextViews
 		mTextViewXVel.setText("X Velocity: "+xVelEst);

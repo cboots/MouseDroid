@@ -1,6 +1,6 @@
 package com.cfms.android.mousedroid.sensor;
 
-import org.ejml.simple.SimpleMatrix;
+import Jama.Matrix;
 
 public class MouseKalmanFilter {
 
@@ -10,75 +10,86 @@ public class MouseKalmanFilter {
 	private static final double[] DEFAULT_R = {0.2, 0.2, 0.2};
 	private static final double[] DEFAULT_Q = {0.1, 0.1, 0.1, 0.2, 0.2, 0.2};
 	
-	SimpleMatrix mX;
-	SimpleMatrix mP;
-	SimpleMatrix mR;
-	SimpleMatrix mQ;
-	SimpleMatrix mF;
-	SimpleMatrix mH;
+	Matrix mX;
+	Matrix mP;
+	Matrix mR;
+	Matrix mQ;
+	Matrix mF;
+	Matrix mH;
+	
+	public static Matrix diag(double... elements)
+	{
+		Matrix diagMat = new Matrix(elements.length, elements.length);
+		for(int i = 0; i < elements.length; i++)
+		{
+			diagMat.set(i, i, elements[i]); 
+		}
+		return diagMat;		
+	}
 	
 	public MouseKalmanFilter()
 	{
 		resetFilter();
-		mH = new SimpleMatrix(3,6);
+		mH = new Matrix(3,6);
 		mH.set(0,0,1);
 		mH.set(1,1,1);
 		mH.set(2,2,1);
 		
-		mF = SimpleMatrix.diag(DEFAULT_GAMMA_A, DEFAULT_GAMMA_A, DEFAULT_GAMMA_A, DEFAULT_GAMMA_V, DEFAULT_GAMMA_V, DEFAULT_GAMMA_V);
-		mR = SimpleMatrix.diag(DEFAULT_R);
-		mQ = SimpleMatrix.diag(DEFAULT_Q);
+		mF = diag(DEFAULT_GAMMA_A, DEFAULT_GAMMA_A, DEFAULT_GAMMA_A, DEFAULT_GAMMA_V, DEFAULT_GAMMA_V, DEFAULT_GAMMA_V);
+		mR = diag(DEFAULT_R);
+		mQ = diag(DEFAULT_Q);
 		
 	}
 	
 	public void resetFilter() {
-		mX = new SimpleMatrix(6,1);
-		mP = SimpleMatrix.diag(0.1, 0.1, 0.1, 0.25, 0.25, 0.25);
+		mX = new Matrix(6,1);
+		mP = diag(0.1, 0.1, 0.1, 0.25, 0.25, 0.25);
 	}
 
-	public void setState(SimpleMatrix X, SimpleMatrix P)
+	public void setState(Matrix X, Matrix P)
 	{
 		mX = X;
 		mP = P;
 	}
 	
-	public SimpleMatrix getState()
+	public Matrix getState()
 	{
 		return mX;
 	}
 	
-	public void setMeasurementNoiseModel(SimpleMatrix R){
+	public void setMeasurementNoiseModel(Matrix R){
 		mR = R.copy();
 	}
 	
-	public void setProcessNoiseModel(SimpleMatrix Q){
+	public void setProcessNoiseModel(Matrix Q){
 		mQ = Q.copy();
 	}
 	
 	public void update(double dt, double[] linear_accel)
 	{
 		//Update F with dt
-		mF.set(4,0,dt);
-		mF.set(5,1,dt);
-		mF.set(6,2,dt);
+		mF.set(3,0,dt);
+		mF.set(4,1,dt);
+		mF.set(5,2,dt);
 		
 		//Prediction step
 		//x_hat = F*x_prev;
 		//P = F*P*F'+Q;
-		mX = mF.mult(mX);
-		mP = ((mF.mult(mP)).mult(mF.transpose())).plus(mQ);
+		mX = mF.times(mX);
+		mP = ((mF.times(mP)).times(mF.transpose())).plus(mQ);
 		
 		
 		//Measurement update
-		SimpleMatrix z = new SimpleMatrix(3,1);
+		Matrix z = new Matrix(3,1);
 		z.set(0, 0, linear_accel[0]);
 		z.set(1, 0, linear_accel[1]);
 		z.set(2, 0, linear_accel[2]);
 		
-		SimpleMatrix yhat = z.minus(mH.mult(mX));
-		SimpleMatrix S = mH.mult(mP).mult(mH.transpose()).plus(mR);
-		SimpleMatrix K = mP.mult(mH.transpose()).mult(S.invert());
-		mX = mX.plus(K.mult(yhat));
-		mP = SimpleMatrix.identity(6).minus(K.mult(mH)).mult(mP);
+		Matrix yhat = z.minus(mH.times(mX));
+		Matrix S = mH.times(mP).times(mH.transpose()).plus(mR);
+		Matrix K = mP.times(mH.transpose()).times(S.inverse());
+		mX = mX.plus(K.times(yhat));
+		
+		mP = Matrix.identity(6,6).minus(K.times(mH)).times(mP);
 	}
 }
