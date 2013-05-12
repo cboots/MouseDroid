@@ -31,4 +31,5 @@ public class MouseActivityTest extends
     	assertEquals("MouseActivity", mActivity.getTag());
     	
     }
+    
 }
