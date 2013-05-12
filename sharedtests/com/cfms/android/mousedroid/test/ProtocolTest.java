@@ -3,28 +3,13 @@ package com.cfms.android.mousedroid.test;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-import android.test.ActivityInstrumentationTestCase2;
+import junit.framework.TestCase;
 
 import com.cfms.android.mousedroid.BTProtocol;
 import com.cfms.android.mousedroid.KeyCode;
-import com.cfms.android.mousedroid.activity.MouseDroidActivity;
 
-public class ProtocolTest extends
-		ActivityInstrumentationTestCase2<MouseDroidActivity> {
+public class ProtocolTest extends TestCase {
 
-	MouseDroidActivity mActivity;
-	
-	public ProtocolTest()
-	{
-		super(MouseDroidActivity.class);
-	}
-	
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        mActivity = this.getActivity();
-        
-    }
 
     public void testPreamble(){
     	assertEquals(BTProtocol.PACKET_PREAMBLE, (byte)0xAA);

@@ -1,26 +1,10 @@
 package com.cfms.android.mousedroid.test;
 
-import android.test.ActivityInstrumentationTestCase2;
+import junit.framework.TestCase;
 
-import com.cfms.android.mousedroid.activity.MouseDroidActivity;
 import com.cfms.android.mousedroid.bluetooth.ByteBufferFactory;
 
-public class ByteBufferFactoryTest extends
-		ActivityInstrumentationTestCase2<MouseDroidActivity> {
-
-	MouseDroidActivity mActivity;
-	
-	public ByteBufferFactoryTest()
-	{
-		super(MouseDroidActivity.class);
-	}
-	
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        mActivity = this.getActivity();
-        
-    }
+public class ByteBufferFactoryTest extends TestCase {
     
     public void testByteBufferReset(){
     	ByteBufferFactory.resetFactory();
