@@ -1,0 +1,14 @@
+/MouseDroidLibs/bin
+/MouseDroidLibs/gen
+/MouseDroidFree/bin
+/MouseDroidPaid/gen/com/cfms/mousedroid/paid
+/MouseDroidFree/gen/com/cfms/mousedroid/free
+/MouseDroidPaid/bin
+/MouseDroidTest/bin
+
+/mousedroidpc/bin/com/cfms/handler
+
+/mousedroidpc/bin/com/cfms/mousedroid/pc
+
+/mousedroidprotocol/bin/com/cfms/android/mousedroid
+/MouseDroidTest/gen/com/cfms/mousedroid/paid/test

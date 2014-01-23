@@ -1,64 +1,17 @@
-<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.cfms.android.mousedroid"
+    package="com.cfms.mousedroid"
     android:versionCode="1"
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="10"
-        android:targetSdkVersion="15" />
-
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.BLUETOOTH" />
-    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
-    <uses-permission android:name="android.permission.VIBRATE" />
-
-    <uses-feature
-        android:name="android.hardware.sensor.accelerometer"
-        android:required="true" />
-    <uses-feature
-        android:name="android.hardware.bluetooth"
-        android:required="true" />
-    <uses-feature
-        android:name="android.hardware.touchscreen.multitouch"
-        android:required="true" />
+        android:minSdkVersion="15"
+        android:targetSdkVersion="18" />
 
     <application
-        android:name="com.cfms.android.mousedroid.MouseDroidApplication"
+        android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/Theme" >
-        <activity
-            android:name="com.cfms.android.mousedroid.activity.MouseDroidActivity"
-            android:label="@string/app_name" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name="com.cfms.android.mousedroid.activity.PreferencesActivity" >
-        </activity>
-        <activity android:name="com.cfms.android.mousedroid.activity.MouseActivity" >
-        </activity>
-        <activity android:name="com.cfms.android.mousedroid.activity.TrackpadActivity" >
-        </activity>
-        <activity android:name="com.cfms.android.mousedroid.activity.NumpadActivity" >
-        </activity>
-        <activity android:name="com.cfms.android.mousedroid.activity.DeviceListActivity" >
-        </activity>
-        <activity android:name="com.cfms.android.mousedroid.activity.MultiTouchActivity" >
-        </activity>
-        <activity android:name="com.cfms.android.mousedroid.bluetooth.BluetoothActivity" >
-        </activity>
-
-        <service android:name="com.cfms.android.mousedroid.bluetooth.BluetoothService" >
-        </service>
-
-        <activity
-            android:name="com.cfms.android.mousedroid.activity.SettingsActivity"
-            android:label="@string/title_activity_settings" >
-        </activity>
+        android:theme="@style/AppTheme" >
     </application>
 
 </manifest>
