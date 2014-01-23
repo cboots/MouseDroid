@@ -18,21 +18,21 @@
             android:layout_weight="1"
             android:orientation="horizontal">
             
-            <com.cfms.android.mousedroid.view.KeyButton
+            <com.cfms.mousedroid.view.KeyButton
                 android:id="@+id/numpad_numlock"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="Num Lock" />
 
-            <com.cfms.android.mousedroid.view.KeyButton
+            <com.cfms.mousedroid.view.KeyButton
                 android:id="@+id/numpad_forwardslash"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="/" />
 
-            <com.cfms.android.mousedroid.view.KeyButton
+            <com.cfms.mousedroid.view.KeyButton
                 android:id="@+id/numpad_asterisk"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
@@ -47,21 +47,21 @@
             android:layout_weight="1"
             android:orientation="horizontal" >
 
-            <com.cfms.android.mousedroid.view.KeyButton
+            <com.cfms.mousedroid.view.KeyButton
                 android:id="@+id/numpad_7"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="7" />
 
-            <com.cfms.android.mousedroid.view.KeyButton
+            <com.cfms.mousedroid.view.KeyButton
                 android:id="@+id/numpad_8"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="8" />
 
-            <com.cfms.android.mousedroid.view.KeyButton
+            <com.cfms.mousedroid.view.KeyButton
                 android:id="@+id/numpad_9"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
@@ -76,21 +76,21 @@
             android:layout_weight="1"
             android:orientation="horizontal" >
 
-            <com.cfms.android.mousedroid.view.KeyButton
+            <com.cfms.mousedroid.view.KeyButton
                 android:id="@+id/numpad_4"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="4" />
 
-            <com.cfms.android.mousedroid.view.KeyButton
+            <com.cfms.mousedroid.view.KeyButton
                 android:id="@+id/numpad_5"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="5" />
 
-            <com.cfms.android.mousedroid.view.KeyButton
+            <com.cfms.mousedroid.view.KeyButton
                 android:id="@+id/numpad_6"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
@@ -105,21 +105,21 @@
             android:layout_weight="1"
             android:orientation="horizontal" >
 
-            <com.cfms.android.mousedroid.view.KeyButton
+            <com.cfms.mousedroid.view.KeyButton
                 android:id="@+id/numpad_1"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="1" />
 
-            <com.cfms.android.mousedroid.view.KeyButton
+            <com.cfms.mousedroid.view.KeyButton
                 android:id="@+id/numpad_2"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="2" />
 
-            <com.cfms.android.mousedroid.view.KeyButton
+            <com.cfms.mousedroid.view.KeyButton
                 android:id="@+id/numpad_3"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
@@ -134,14 +134,14 @@
             android:layout_weight="1"
             android:orientation="horizontal" >
 
-            <com.cfms.android.mousedroid.view.KeyButton
+            <com.cfms.mousedroid.view.KeyButton
                 android:id="@+id/numpad_0"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
                 android:layout_weight="2"
                 android:text="0" />
 
-            <com.cfms.android.mousedroid.view.KeyButton
+            <com.cfms.mousedroid.view.KeyButton
                 android:id="@+id/numpad_decimal"
                 android:layout_width="0dip"
                 android:layout_height="match_parent"
@@ -157,21 +157,21 @@
             android:layout_weight="1"
             android:orientation="vertical" >
 
-            <com.cfms.android.mousedroid.view.KeyButton
+            <com.cfms.mousedroid.view.KeyButton
                 android:id="@+id/numpad_minus"
                 android:layout_width="match_parent"
                 android:layout_height="0dip"
                 android:layout_weight="1"
                 android:text="-" />
 
-            <com.cfms.android.mousedroid.view.KeyButton
+            <com.cfms.mousedroid.view.KeyButton
                 android:id="@+id/numpad_plus"
                 android:layout_width="match_parent"
                 android:layout_height="0dip"
                 android:layout_weight="2"
                 android:text="+" />
 
-            <com.cfms.android.mousedroid.view.KeyButton
+            <com.cfms.mousedroid.view.KeyButton
                 android:id="@+id/numpad_enter"
                 android:layout_width="match_parent"
                 android:layout_height="0dip"

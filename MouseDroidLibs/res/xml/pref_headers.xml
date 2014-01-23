@@ -3,19 +3,19 @@
     <!-- These settings headers are only used on tablets. -->
 
     <header
-        android:fragment="com.cfms.android.mousedroid.SettingsActivity$GeneralPreferenceFragment"
+        android:fragment="com.cfms.mousedroid.SettingsActivity$GeneralPreferenceFragment"
         android:title="@string/pref_header_general" />
     <header
-        android:fragment="com.cfms.android.mousedroid.SettingsActivity$HapticFeedbackPreferenceFragment"
+        android:fragment="com.cfms.mousedroid.SettingsActivity$HapticFeedbackPreferenceFragment"
         android:title="@string/pref_header_haptic_feedback" />
     <header
-        android:fragment="com.cfms.android.mousedroid.SettingsActivity$SendUsagePreferenceFragment"
+        android:fragment="com.cfms.mousedroid.SettingsActivity$SendUsagePreferenceFragment"
         android:title="@string/pref_header_send_usage" />
     <header
-        android:fragment="com.cfms.android.mousedroid.SettingsActivity$BluetoothPreferenceFragment"
+        android:fragment="com.cfms.mousedroid.SettingsActivity$BluetoothPreferenceFragment"
         android:title="@string/pref_header_bluetooth" />
     <header
-        android:fragment="com.cfms.android.mousedroid.SettingsActivity$AppearancePreferenceFragment"
+        android:fragment="com.cfms.mousedroid.SettingsActivity$AppearancePreferenceFragment"
         android:title="@string/pref_header_appearance" />
 
 </preference-headers>

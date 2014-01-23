@@ -8,12 +8,12 @@ import java.awt.event.InputEvent;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
-import com.cfms.android.mousedroid.BTProtocol;
-import com.cfms.android.mousedroid.BTProtocol.KeyEventType;
-import com.cfms.android.mousedroid.BTProtocol.MouseButton;
-import com.cfms.android.mousedroid.BTProtocol.MouseButtonEvent;
-import com.cfms.android.mousedroid.BTProtocol.PacketID;
-import com.cfms.android.mousedroid.KeyCode;
+import com.cfms.mousedroid.BTProtocol;
+import com.cfms.mousedroid.BTProtocol.KeyEventType;
+import com.cfms.mousedroid.BTProtocol.MouseButton;
+import com.cfms.mousedroid.BTProtocol.MouseButtonEvent;
+import com.cfms.mousedroid.BTProtocol.PacketID;
+import com.cfms.mousedroid.KeyCode;
 import com.cfms.mousedroid.pc.bluetooth.BluetoothServer;
 import com.cfms.mousedroid.pc.bluetooth.BluetoothServer.BTEventListener;
 

@@ -11,7 +11,7 @@ import javax.microedition.io.Connector;
 import javax.microedition.io.StreamConnection;
 import javax.microedition.io.StreamConnectionNotifier;
 
-import com.cfms.android.mousedroid.BTProtocol;
+import com.cfms.mousedroid.BTProtocol;
 import com.cfms.handler.Handler;
 import com.cfms.handler.Looper;
 import com.cfms.handler.Message;

@@ -11,9 +11,9 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.border.EmptyBorder;
 
-import com.cfms.android.mousedroid.BTProtocol.KeyEventType;
-import com.cfms.android.mousedroid.BTProtocol.MouseButton;
-import com.cfms.android.mousedroid.BTProtocol.MouseButtonEvent;
+import com.cfms.mousedroid.BTProtocol.KeyEventType;
+import com.cfms.mousedroid.BTProtocol.MouseButton;
+import com.cfms.mousedroid.BTProtocol.MouseButtonEvent;
 import com.cfms.mousedroid.pc.CommandProcessor.CommandEventListener;
 
 public class MainWindow extends JFrame implements CommandEventListener{
