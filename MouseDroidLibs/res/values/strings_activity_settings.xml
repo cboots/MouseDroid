@@ -1,0 +1,44 @@
+<resources>
+
+    <string name="title_activity_settings">Settings</string>
+
+    <!-- Strings related to Settings -->
+
+    <!-- General settings -->
+    <string name="pref_header_general">General</string>
+
+    <!-- Send Anonymous Usage Data Settings -->
+    <string name="pref_header_send_usage">Send Usage Data</string>
+    
+    <string name="flurry_enabled_summary_off">Help Improve This App By Providing Anonymous Usage Data</string>
+    <string name="flurry_enabled_summary_on">Anonymous Data Will Be Sent To Flurry Analytics To Help Improve This App</string>
+    <string name="flurry_enabled_title">Send Usage Data</string>
+    
+	<!-- Haptic Feedback settings -->    
+    <string name="pref_header_haptic_feedback">Haptic Feedback</string>
+    <string name="key_vibrate_summaryOff">Buttons will not vibrate when pressed</string>
+    <string name="key_vibrate_summaryOn">Buttons will vibrate when pressed</string>
+    <string name="key_vibrate_title">Enable Button Force Feedback</string>
+    
+    <!-- Bluetooth Settings -->
+    <string name="pref_header_bluetooth">Bluetooth</string>
+    <string name="htcbluetoothcompat_summaryOff">Enable this if you are having trouble connecting on an HTC phone.</string>
+    <string name="htcbluetoothcompat_summaryOn">Bypasses an internal issue on some HTC devices</string>
+    <string name="htcbluetoothcompat_title">Enable HTC Bluetooth Compatibility</string>
+    
+    <!-- Appearance Settings -->
+    <string name="pref_header_appearance">Appearance</string>
+    <string name="theme_title">Change Skin</string>
+    <string name="theme_summary">Changes the look and feel of the app.</string>
+    <string-array name="theme_names">
+        <item>Dark (Default)</item>
+        <item>Light</item>
+        <item>Colorful</item>
+    </string-array>
+    <integer-array name="theme_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </integer-array>
+    
+</resources>

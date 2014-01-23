@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <Button
+        android:id="@+id/calibrate_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Calibrate" />
+    
+    <TextView android:id="@+id/xveltext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="X Velocity: 0"/>
+    
+    <TextView android:id="@+id/yveltext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Y Velocity: 0"/>
+    
+    <TextView android:id="@+id/zveltext"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Z Velocity: 0"/>
+</LinearLayout>
